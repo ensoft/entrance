@@ -1,0 +1,13 @@
+Client->Server: HTTP GET index.html
+Server->Client: HTTP serve index.html
+Client->Server: HTTP GET linked css, javascript, ...
+Server->Client: HTTP serve linked resources
+note left of Client: Elm application starts
+Client->Server: open websocket
+Server->Client: websocket connected notification
+note right of Client: client/server communication established
+note left of Client: application fully functional
+Client->Server: websocket request
+Server->Client: websocket notification
+Server->Client: websocket notification
+Client->Server: websocket request
