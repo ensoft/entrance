@@ -82,7 +82,6 @@ const port = dev_mode ? 8000 : location.port;
 const websocket = `${websocketProtocol}//${location.hostname}:${port}/ws`;
 
 var Elm = __webpack_require__(1);
-console.log(Elm);
 Elm.Main.fullscreen({websocket: websocket});
 
 

@@ -1,7 +1,7 @@
 module EnTrance.Ping
     exposing
         ( State
-        , Msg
+        , Msg(StopMonitoring)
         , displayWarning
         , init
         , subscriptions
@@ -57,11 +57,12 @@ timeout =
     3 * Time.second
 
 
-{-| Opaque message type
+{-| Internal message type. Opaque apart from the `StopMonitoring` value,
+that can be sent to the `update` function to stop monitoring.
 -}
 type Msg
-    = TickMsg Time
-    | StopMonitoringMsg
+    = Tick Time
+    | StopMonitoring
 
 
 
@@ -91,7 +92,7 @@ subscriptions state =
         -- the debugger
         Sub.none
     else
-        Time.every Time.second TickMsg
+        Time.every Time.second Tick
 
 
 {-| Actions when websocket connectivity established
@@ -106,7 +107,7 @@ websocketUp state =
 update : Msg -> State -> ( State, Cmd msg )
 update msg state =
     case msg of
-        TickMsg now ->
+        Tick now ->
             let
                 -- If we've just started out, then consider ourselves to have
                 -- just received a successful ping response from the server, to
@@ -140,7 +141,7 @@ update msg state =
                 , cmd
                 )
 
-        StopMonitoringMsg ->
+        StopMonitoring ->
             pure { state | stopMonitoring = True, displayWarning = False }
 
 
