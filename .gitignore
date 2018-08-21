@@ -3,3 +3,8 @@ dist/
 entrance.egg-info/
 elm-stuff/
 documentation.json
+node_modules/
+yarn.lock
+debug.log
+notes.json
+venv/

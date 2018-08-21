@@ -9,7 +9,7 @@ from . import WebsocketHandler
 log = logging.getLogger(__name__)
 location = getattr(sys, '_MEIPASS', '.') + '/' # where pre-canned files live
 
-def start(config):
+def start(config, task):
     """
     Start a simple server with the specified configuration. If an app needs
     more elaborate setup, then just copy this function and modify.
@@ -35,6 +35,10 @@ def start(config):
     async def home_page(request):
         return await sanic.response.file(static_dir + '/index.html')
 
+    # Optionally invoke a caller-specified task once the event loop is up
+    if task is not None:
+        app.add_task(task)
+
     # Enter event loop
     app.run(host=start_cfg['host'], port=start_cfg['port'])
 
@@ -55,7 +59,7 @@ def parse_args(args):
                         help='logging definition file')
     return parser.parse_args(args)
 
-def main(*args):
+def main(*args, task=None):
     # Load up preferences
     opts = parse_args(args)
 
@@ -78,11 +82,8 @@ def main(*args):
 
     # Go
     logging.config.dictConfig(logging_config)
-    start(main_config)
+    start(main_config, task)
     log.info('Closing down gracefully')
-
-if __name__ == '__main__':
-    main(*sys.argv[1:])
 
 # Default logging.yml file
 logging_yaml_default="""
@@ -132,3 +133,6 @@ loggers:
         level: WARNING
         handlers: [console, debug]
 """
+
+if __name__ == '__main__':
+    main(*sys.argv[1:])

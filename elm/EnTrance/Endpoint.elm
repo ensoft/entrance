@@ -22,33 +22,29 @@ module EnTrance.Endpoint
         , forceRestart
         )
 
-{-| Helper functionality for EnTrance endpoints. In particular:
+{-| Helper functionality for EnTrance endpoints and handling outbound requests.
 
- - all outbound requests include an `endpoint` string field, that is reflected
-   back by the server in reply notifications, to identify the receiving sub-app
+Most requests in practice are RPC requests (ie synchronous requests that expect
+a single notification in response, indicating either success or failure). The
+[RpcData](#RpcData) type encapsulates the client representation of that.
 
- - most outbound requests include an `id` string field, that is unique per
-   endpoint and reflected back by the server
+An [Endpoint](#Endpoint) encapsulates the more general notion, of a part of your
+app that is capable of sending any sort of message to the server, and having
+notifications routed to this part of your app.
 
- - a subset of requests is considered an `rpc` by the client, meaning the client
-   expects exactly one response notification indicating either success or error,
-   the client validates the "id" field is the one it is waiting for, and the
-   client maintains the state of whether it is waiting for a response (typically
-   with some UI such as a progress bar)
+# RpcData
 
-## RpcData
-
-One mental model is that one `RpcData` value corresponds to one progress indicator in
-your view. ie an `RpcData` value encapsulates the state for a single synchronous
-RPC request. If you can have three progress indicators visible (ie three indpendent rpc
-requests at the same time, that can complete and each either succeed or fail) then
-you want three `RpcData` values in your model.
+One mental model is that a single `RpcData` value corresponds to one progress indicator
+in your view; ie an `RpcData` value encapsulates the state for a single synchronous
+RPC request. For example, if you can have three progress indicators visible (ie three
+indpendent rpc requests at the same time, that can complete and each either succeed or
+fail) then you want three `RpcData` values in your model.
 
 @docs RpcData
 @docs isLoading
 @docs isFailure
 
-## Endpoints
+# Endpoints
 
 An `Endpoint` encapsulates the state for sending messages to the server, and
 routing any resulting notifications back to this part of your app. You almost
@@ -60,7 +56,7 @@ certainly want exactly one `Endpoint` value in your model.
 @docs named
 @docs defaultEndpoint
 
-## Endpoint-RpcData interactions
+# Endpoint-RpcData interactions
 
 When you kick off an rpc request, you want the progress indicator to start showing.
 Under the covers, this means putting the corresponding `RpcData` value into `Loading`
@@ -71,7 +67,7 @@ want to do that.
 
 @docs loading
 
-## Sending requests
+# Sending requests
 
 The following functions make it easy to construct a request, and send it.
 
@@ -86,7 +82,7 @@ The following functions make it easy to construct a request, and send it.
 @docs sendRaw
 @docs decodeRpc
 
-## Built-in global requests
+# Built-in global requests
 
 Type-safe constructors for any global requests not handled by a specific
 module (such as `Ping` or `Persist` are here. There's currently only one.
@@ -287,8 +283,7 @@ sendRaw (Endpoint { endpoint, websocket }) params =
 
 {-| Decode an incoming notification that is an RPC reply. If the
 notification has a stale or incorrect `id` value, it triggers a
-decode error. (You can disambiguate genuine decode errors from this
-bad `id` value using the [errorIsWarning](#errorIsWarning) function.)
+decode error.
 -}
 decodeRpc : Decoder result -> RpcData result -> Decoder (RpcData result)
 decodeRpc decoder rpcData =

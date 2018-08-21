@@ -1,5 +1,5 @@
 {
-    "version": "1.0.0",
+    "version": "1.0.1",
     "summary": "Framework for Elm apps using a Python 3.5+ asyncio backend",
     "repository": "https://github.com/ensoft/entrance.git",
     "license": "BSD3",
