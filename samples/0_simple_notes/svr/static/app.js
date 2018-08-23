@@ -9974,21 +9974,26 @@ var _ensoft$entrance$EnTrance_Internal$errorIsWarning = _elm_lang$core$String$st
 	A2(_elm_lang$core$Basics_ops['++'], 'I ran into a `fail` decoder: ', _ensoft$entrance$EnTrance_Internal$dropPrefix));
 var _ensoft$entrance$EnTrance_Internal$globalEndpointName = 'global';
 
-var _ensoft$entrance$EnTrance_Endpoint$sendRaw = F2(
-	function (_p0, params) {
+var _ensoft$entrance$EnTrance_Endpoint$subscription = F2(
+	function (_p0, mkMsg) {
 		var _p1 = _p0;
+		return A2(_elm_lang$websocket$WebSocket$listen, _p1._0.websocket, mkMsg);
+	});
+var _ensoft$entrance$EnTrance_Endpoint$sendRaw = F2(
+	function (_p2, params) {
+		var _p3 = _p2;
 		var allParams = {
 			ctor: '::',
 			_0: {
 				ctor: '_Tuple2',
 				_0: 'endpoint',
-				_1: _elm_lang$core$Json_Encode$string(_p1._0.endpoint)
+				_1: _elm_lang$core$Json_Encode$string(_p3._0.endpoint)
 			},
 			_1: params
 		};
 		return A2(
 			_elm_lang$websocket$WebSocket$send,
-			_p1._0.websocket,
+			_p3._0.websocket,
 			A2(
 				_elm_lang$core$Json_Encode$encode,
 				0,
@@ -10016,7 +10021,7 @@ var _ensoft$entrance$EnTrance_Endpoint$addString = F2(
 			key,
 			_elm_lang$core$Json_Encode$string(value));
 	});
-var _ensoft$entrance$EnTrance_Endpoint$setTarget = _ensoft$entrance$EnTrance_Endpoint$addString('target');
+var _ensoft$entrance$EnTrance_Endpoint$addTarget = _ensoft$entrance$EnTrance_Endpoint$addString('target');
 var _ensoft$entrance$EnTrance_Endpoint$request = function (reqType) {
 	return A3(
 		_ensoft$entrance$EnTrance_Endpoint$addString,
@@ -10030,15 +10035,13 @@ var _ensoft$entrance$EnTrance_Endpoint$forceRestart = function (endpoint) {
 		endpoint,
 		_ensoft$entrance$EnTrance_Endpoint$request('force_restart'));
 };
-var _ensoft$entrance$EnTrance_Endpoint$id2string = function (_p2) {
-	var _p3 = _p2;
-	return _elm_lang$core$Basics$toString(_p3._0.id);
-};
-var _ensoft$entrance$EnTrance_Endpoint$defaultEndpoint = 'defaultEndpoint';
-var _ensoft$entrance$EnTrance_Endpoint$getWebSocket = function (_p4) {
+var _ensoft$entrance$EnTrance_Endpoint$id2string = function (_p4) {
 	var _p5 = _p4;
-	return _p5._0.websocket;
+	return _elm_lang$core$Basics$toString(_p5._0.id);
 };
+var _ensoft$entrance$EnTrance_Endpoint$defaultTarget = 'defaultTarget';
+var _ensoft$entrance$EnTrance_Endpoint$addDefaultTarget = _ensoft$entrance$EnTrance_Endpoint$addTarget(_ensoft$entrance$EnTrance_Endpoint$defaultTarget);
+var _ensoft$entrance$EnTrance_Endpoint$defaultEndpoint = 'defaultEndpoint';
 var _ensoft$entrance$EnTrance_Endpoint$isFailure = function (rpcData) {
 	var _p6 = rpcData;
 	if (_p6.ctor === 'Failure') {
@@ -10160,6 +10163,16 @@ var _ensoft$entrance$EnTrance_Endpoint$send = F2(
 		};
 	});
 
+var _ensoft$entrance$EnTrance_Notification$delegateTo = F5(
+	function (decoder, subModel, nfnCons, nfnType, model) {
+		return A2(
+			_elm_lang$core$Json_Decode$map,
+			nfnCons,
+			A2(
+				decoder,
+				subModel(model),
+				nfnType));
+	});
 var _ensoft$entrance$EnTrance_Notification$subscription = F2(
 	function (mkMsg, websocket) {
 		return A2(_elm_lang$websocket$WebSocket$listen, websocket, mkMsg);
@@ -14076,10 +14089,7 @@ var _ensoft$entrance_examples$Main$ReceivedJSON = function (a) {
 	return {ctor: 'ReceivedJSON', _0: a};
 };
 var _ensoft$entrance_examples$Main$subscriptions = function (model) {
-	return A2(
-		_ensoft$entrance$EnTrance_Notification$subscription,
-		_ensoft$entrance_examples$Main$ReceivedJSON,
-		_ensoft$entrance$EnTrance_Endpoint$getWebSocket(model.endpoint));
+	return A2(_ensoft$entrance$EnTrance_Endpoint$subscription, model.endpoint, _ensoft$entrance_examples$Main$ReceivedJSON);
 };
 var _ensoft$entrance_examples$Main$ClearAll = {ctor: 'ClearAll'};
 var _ensoft$entrance_examples$Main$Save = {ctor: 'Save'};

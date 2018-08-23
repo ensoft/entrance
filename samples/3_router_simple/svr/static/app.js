@@ -19280,7 +19280,7 @@ var _ensoft$entrance$Config_Types$ConfigLoadNfn = function (a) {
 	return {ctor: 'ConfigLoadNfn', _0: a};
 };
 
-var _ensoft$entrance$Utils_Extra_Json$encodeDict = function (data) {
+var _ensoft$entrance$Utils_Extra_Json_Encode$dict = function (data) {
 	return _elm_lang$core$Json_Encode$object(
 		A2(
 			_elm_lang$core$List$map,
@@ -19357,10 +19357,10 @@ var _ensoft$entrance$Config_Remote$sendReq = F2(
 							return _ensoft$entrance$EnTrance_Endpoint$request('cli_config_get_failures');
 						case 'PersistSaveReq':
 							return _ensoft$entrance$EnTrance_Persist$save(
-								_ensoft$entrance$Utils_Extra_Json$encodeDict(_p1._0));
+								_ensoft$entrance$Utils_Extra_Json_Encode$dict(_p1._0));
 						case 'PersistLoadReq':
 							return _ensoft$entrance$EnTrance_Persist$load(
-								_ensoft$entrance$Utils_Extra_Json$encodeDict(_elm_lang$core$Dict$empty));
+								_ensoft$entrance$Utils_Extra_Json_Encode$dict(_elm_lang$core$Dict$empty));
 						default:
 							return A2(_ensoft$entrance$EnTrance_Feature$start, _ensoft$entrance$Config_Remote$feature, _ensoft$entrance$EnTrance_Feature$SubscribeToConState);
 					}
@@ -28939,10 +28939,10 @@ var _ensoft$entrance$Netconf_Remote$sendReq = F2(
 							}
 						case 'PersistSaveReq':
 							return _ensoft$entrance$EnTrance_Persist$save(
-								_ensoft$entrance$Utils_Extra_Json$encodeDict(_p1._0));
+								_ensoft$entrance$Utils_Extra_Json_Encode$dict(_p1._0));
 						case 'PersistLoadReq':
 							return _ensoft$entrance$EnTrance_Persist$load(
-								_ensoft$entrance$Utils_Extra_Json$encodeDict(_elm_lang$core$Dict$empty));
+								_ensoft$entrance$Utils_Extra_Json_Encode$dict(_elm_lang$core$Dict$empty));
 						default:
 							return A2(_ensoft$entrance$EnTrance_Feature$start, _ensoft$entrance$Netconf_Remote$feature, _ensoft$entrance$EnTrance_Feature$SubscribeToConState);
 					}

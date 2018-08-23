@@ -10,7 +10,7 @@ import EnTrance.Endpoint as Endpoint exposing (RpcData(..))
 import EnTrance.Feature as Feature
 import EnTrance.Persist as Persist
 import Config.Types exposing (..)
-import Utils.Extra.Json as Json
+import Utils.Extra.Json.Encode as Encode
 
 
 {-| The endpoint name
@@ -87,10 +87,10 @@ sendReq req model =
             Endpoint.request "cli_config_get_failures"
 
         PersistSaveReq data ->
-            Persist.save (Json.encodeDict data)
+            Persist.save (Encode.dict data)
 
         PersistLoadReq ->
-            Persist.load (Json.encodeDict Dict.empty)
+            Persist.load (Encode.dict Dict.empty)
 
         StartFeatureReq ->
             Feature.start feature Feature.SubscribeToConState

@@ -93,6 +93,20 @@ simultaneously, bad things will happen; the `EnTrance.Persist` feature used
 here is intended more for things like user preferences that change only
 intermittently.) The app logic is deliberately minimised.
 
+## `3_router_simple`
+
+This is a multi-endpoint app, showing how to construct a complex app out of
+smaller parts, each with their own `Model`/`Msg`/`Notification` types,
+`update`/`nfnUpdate`/`view` functions, CSS styling etc. It also demonstrates
+having top-level "toasts" (temporary notifications that disappear after a few
+seconds), target features, complex preference handling, and various other more
+realistic features.
+
+It also currently shows how to turn the debugger on and off interactively,
+unless the `./build_prod` script was supplied with a `nodebug` argument. This
+isn't actually much of a win in practice, so will probably be simplified in
+future to be like the earlier examples (debugger present on port 3000 for
+development, debugger disabled on port 8000 for production).
 
 ### Note
 

@@ -10,7 +10,7 @@ import Netconf.Types exposing (..)
 import EnTrance.Endpoint as Endpoint exposing (RpcData(..))
 import EnTrance.Feature as Feature
 import EnTrance.Persist as Persist
-import Utils.Extra.Json as Json
+import Utils.Extra.Json.Encode as Encode
 
 
 {-| The endpoint name
@@ -95,11 +95,11 @@ sendReq req model =
                         sendOp "commit"
 
             PersistSaveReq data ->
-                Persist.save (Json.encodeDict data)
+                Persist.save (Encode.dict data)
 
             PersistLoadReq ->
                 -- Dict.empty is the default value to use if server has nothing stored
-                Persist.load (Json.encodeDict Dict.empty)
+                Persist.load (Encode.dict Dict.empty)
 
             StartFeatureReq ->
                 Feature.start feature Feature.SubscribeToConState
