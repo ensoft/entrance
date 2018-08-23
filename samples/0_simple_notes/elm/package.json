@@ -4,7 +4,6 @@
   "description": "Simple EnTrance example",
   "license": "MIT",
   "dependencies": {
-    "css-loader": "^0.26.1",
     "elm-hot-loader": "^0.5.4",
     "elm-webpack-loader": "^4.3.1",
     "file-loader": "^0.10.0",
@@ -16,11 +15,7 @@
     "webpack-dev-server": "^2.4.0"
   },
   "devDependencies": {
-    "elm-css": "^0.6.0",
-    "elm-css-webpack-loader": "^3.1.0",
     "extract-text-webpack-plugin": "^2.1.2",
-    "node-sass": "^4.5.3",
-    "sass-loader": "^6.0.6",
     "webpack": "^2.6.1"
   },
   "scripts": {

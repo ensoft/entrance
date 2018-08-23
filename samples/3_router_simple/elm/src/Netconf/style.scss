@@ -1,0 +1,46 @@
+/*
+ * Netconf style
+ */
+
+/*
+ * Smaller text size for XML output
+ */
+pre code {
+    font-size: 12px;
+}
+
+/*
+ * XML highlighting
+ */
+.hljs {
+    display: block;
+    overflow-x: auto;
+    padding: 0.5em;
+    background: $white;
+    color: $purple;
+}
+
+.hljs-attribute, .hljs-keyword, .hljs-built_in, .hljs-attr {
+    color: $green;
+}
+
+.hljs-number, .hljs-literal, .hljs-string, .hljs-name {
+    color: $blue;
+}
+
+.hljs-comment, .hljs-meta {
+    color: #ccc;
+    font-style: italic;
+}
+
+.hljs-tag {
+    color: #448;
+}
+
+.hljs-title, .hljs-value, .hljs-class, .hljs-function, .hljs-string {
+    color: $red;
+}
+
+.hljs-keyword, .hljs-title, .hljs-class, .hljs-section {
+    font-weight: bold;
+}

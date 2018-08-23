@@ -1,0 +1,20 @@
+/*
+ * Assemble the overall style
+ */
+
+/*
+ * Definitions
+ */
+@import "TopLevel/defs.scss";
+
+/*
+ * Style declarations
+ */
+@import "TopLevel/style.scss";
+
+@import "Config/style.scss";
+@import "Connection/style.scss";
+@import "Logs/style.scss";
+@import "Netconf/style.scss";
+@import "Utils/samples.scss";
+@import "Utils/toast.scss";

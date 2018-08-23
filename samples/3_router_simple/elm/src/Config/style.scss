@@ -1,0 +1,48 @@
+/*
+ * Config styling
+ */
+
+#MainConfigTab {
+  /* cooked output */
+  .config {
+    font-family: Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+    font-size: 90%;
+    color: #aaa;
+    white-space: pre;
+    display: table;
+    border: 1px solid white;
+    padding: 0 3px;
+  }
+
+  .error {
+    display: inline-block;
+    color: black;
+    padding-right: 1em;
+    border-bottom: 1px solid $red;
+   }
+   .unsupported .error {
+       border-bottom-color: $green;
+   }
+
+  .err-msg {
+    display: inline-block;
+    position: absolute;
+    margin-left: -.2em;
+    margin-top: 3px;
+    padding: 1px .5em 0;
+    background-color: white;
+    color: $red;
+    font-weight: 500;
+    font-size: 80%;
+    max-width: 31em;
+    border: 1px solid $red;
+    border-radius: .3em;
+  }
+  .unsupported .err-msg {
+    color: $green;
+    border-color: $green;
+  }
+
+  /* raw output */
+  .unsupported { color: $green;  }
+}

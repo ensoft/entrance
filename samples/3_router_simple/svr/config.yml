@@ -1,0 +1,11 @@
+# Commit check app configuration
+start:
+  host: 0.0.0.0
+  port: 8000
+  static_dir: static
+
+features:
+  core:
+    allow_restart_requests: true
+  persist:
+    filename: prefs.json

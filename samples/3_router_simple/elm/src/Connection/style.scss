@@ -1,0 +1,48 @@
+/*
+ * Connection modal styling
+ */
+
+/*
+ * Shrink alerts in dialogs (for status tab in particular)
+ */
+.modal-body .alert {
+    padding-top: 0.4em;
+    padding-bottom: 0.3em;
+    margin-bottom: 0.5em;
+}
+
+/*
+ * Connection modal dialog - keep consistent height across tabs
+ */
+#connection-modal-contents {
+    height: 20em;
+    overflow-y: auto;
+}
+
+/*
+ * Align elements on the credentials tab
+ */
+.col-form-label {
+    text-align: right;
+}
+
+label {
+    padding-right: 0;
+    .custom-radio, .form-check-label {
+        margin-top: 0.4rem;
+    }
+}
+
+/*
+ * Colours
+ */
+.state-grey  { color: $grey;   }
+.state-amber { color: $orange; }
+.state-green { color: $green;  }
+.state-red   { color: $red;    }
+
+input.bad-input {
+    &, &:focus {
+        background-color: $muddy-red;
+    }
+}

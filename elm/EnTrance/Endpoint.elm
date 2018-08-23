@@ -4,20 +4,22 @@ module EnTrance.Endpoint
         , isLoading
         , isFailure
         , Endpoint
-        , getWebSocket
         , default
         , named
         , defaultEndpoint
+        , defaultTarget
         , loading
         , Params
         , request
-        , setTarget
+        , addTarget
+        , addDefaultTarget
         , addString
         , addBool
         , addValue
         , Model
         , send
         , sendRaw
+        , subscription
         , decodeRpc
         , forceRestart
         )
@@ -51,10 +53,10 @@ routing any resulting notifications back to this part of your app. You almost
 certainly want exactly one `Endpoint` value in your model.
 
 @docs Endpoint
-@docs getWebSocket
 @docs default
 @docs named
 @docs defaultEndpoint
+@docs defaultTarget
 
 # Endpoint-RpcData interactions
 
@@ -73,13 +75,18 @@ The following functions make it easy to construct a request, and send it.
 
 @docs Params
 @docs request
-@docs setTarget
+@docs addTarget
+@docs addDefaultTarget
 @docs addString
 @docs addBool
 @docs addValue
 @docs Model
 @docs send
 @docs sendRaw
+
+# Receiving notifications
+
+@docs subscription
 @docs decodeRpc
 
 # Built-in global requests
@@ -145,13 +152,6 @@ type Endpoint
         }
 
 
-{-| Retrieve the websocket from an Endpoint
--}
-getWebSocket : Endpoint -> String
-getWebSocket (Endpoint e) =
-    e.websocket
-
-
 {-| Initialize an endpoint value using `defaultEndpoint` axs the name.
 Use this when your app does not use multiple endpoints. Takes a websocket to use.
 -}
@@ -160,11 +160,18 @@ default =
     named defaultEndpoint
 
 
-{-| Endpoint name to use if you don't need multiple endpoints. Works with `default`.
+{-| Endpoint name to use if you don't need multiple endpoints.
 -}
 defaultEndpoint : String
 defaultEndpoint =
     "defaultEndpoint"
+
+
+{-| Target name to use if you don't need multiple targets.
+-}
+defaultTarget : String
+defaultTarget =
+    "defaultTarget"
 
 
 {-| Initialize an endpoint value, using an explicit endpoint name. Use
@@ -223,11 +230,18 @@ request reqType =
     addString "req_type" reqType []
 
 
-{-| Set the `target` request parameter.
+{-| Add a `target` request parameter.
 -}
-setTarget : String -> Params -> Params
-setTarget =
+addTarget : String -> Params -> Params
+addTarget =
     addString "target"
+
+
+{-| Add a default `target` request parameter.
+-}
+addDefaultTarget : Params -> Params
+addDefaultTarget =
+    addTarget defaultTarget
 
 
 {-| Set an arbitrary 'String'-valued request parameter.
@@ -279,6 +293,13 @@ sendRaw (Endpoint { endpoint, websocket }) params =
         Encode.object allParams
             |> Encode.encode 0
             |> WebSocket.send websocket
+
+
+{-| Subscribe to websocket notifications. Takes an Endpoint and a message constructor.
+-}
+subscription : Endpoint -> (String -> msg) -> Sub msg
+subscription (Endpoint { websocket }) mkMsg =
+    WebSocket.listen websocket mkMsg
 
 
 {-| Decode an incoming notification that is an RPC reply. If the

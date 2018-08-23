@@ -1,0 +1,12 @@
+/*
+ * Style for samples: close buttons to right of dropdown menu items
+ */
+
+.dropdown-menu.with-close {
+    padding-right: 2em;
+}
+
+.dropdown-menu.with-close button.btn.close {
+    margin-right: -2em;
+    color: $light-grey;
+}

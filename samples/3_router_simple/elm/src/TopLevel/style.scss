@@ -1,0 +1,36 @@
+/*
+ * Top-level styles
+ */
+
+.spacer            { margin-bottom: 10px; }
+.top-spacer        { margin-top: 10px;    }
+.big-top-spacer    { margin-top: 20px;    }
+.progress-spacer   { margin: 5px 0;       }
+.noprogress-spacer { margin-top: 15px;    }
+
+.list-group { margin: 10px 0 40px 0; }
+
+.float-right { float: right; }
+
+/* Always have a scrollbar, so it doesn't shift when it comes/goes */
+html { overflow-y: scroll; }
+
+/*
+ * Navbar logo 
+ */
+.fit-in-navbar { 
+  height: 30px;
+  margin-top: 5px;
+}
+
+/*
+ * Output typography - wrap the fixed-width query output
+ */
+pre { white-space: pre-wrap; }
+
+ /*
+  * Header dropdown: enable floating something to the left of a menu item
+  */
+.dropdown-item { position: relative;              }
+.dropdown-left { position: absolute; left: 0.5em; }
+

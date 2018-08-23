@@ -3,6 +3,7 @@ module EnTrance.Notification
         ( GlobalNfn(..)
         , Config
         , decode
+        , delegateTo
         , subscription
         )
 
@@ -11,6 +12,7 @@ module EnTrance.Notification
 @docs GlobalNfn
 @docs Config
 @docs decode
+@docs delegateTo
 @docs subscription
 -}
 
@@ -61,6 +63,20 @@ decode cfg model json =
                 cfg.makeGlobal (WarningNfn error)
             else
                 (cfg.makeGlobal << ErrorNfn) ("Invalid JSON: " ++ toString error)
+
+
+{-| Helper function to delegate a notification to a sub-part of the main app
+-}
+delegateTo :
+    (subModel -> nfnType -> Decoder subNfn)
+    -> (model -> subModel)
+    -> (subNfn -> nfn)
+    -> nfnType
+    -> model
+    -> Decode.Decoder nfn
+delegateTo decoder subModel nfnCons nfnType model =
+    decoder (subModel model) nfnType
+        |> Decode.map nfnCons
 
 
 

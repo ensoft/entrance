@@ -1,10 +1,10 @@
 module State exposing (initialModel, update, subscriptions)
 
-import Dict exposing (Dict)
+import Dict
 import Json.Decode as Decode exposing (Decoder)
 import Json.Encode as Encode
 import Response exposing (Response, mapBoth, res)
-import EnTrance.Endpoint as Endpoint exposing (Endpoint, defaultEndpoint)
+import EnTrance.Endpoint as Endpoint exposing (defaultEndpoint)
 import EnTrance.Notification as Notification exposing (GlobalNfn(..))
 import EnTrance.Persist as Persist
 import EnTrance.Ping as Ping
@@ -22,41 +22,32 @@ initialModel flags =
         , errors = []
         , connected = False
         , pingState = Ping.init flags.websocket
-        , endpoint = (Endpoint.default flags.websocket)
+        , endpoint = Endpoint.default flags.websocket
         }
 
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    let
-        websocket =
-            Endpoint.getWebSocket model.endpoint
-    in
-        Sub.batch
-            [ Ping.subscriptions model.pingState |> Sub.map PingMsg
-            , Notification.subscription ReceivedJSON websocket
-            ]
+    Sub.batch
+        [ Endpoint.subscription model.endpoint ReceivedJSON
+        , Ping.subscriptions model.pingState |> Sub.map PingMsg
+        ]
 
 
 websocketUp : Model -> ( Model, Cmd Msg )
 websocketUp model =
-    -- What to do when websocket connectivity is established
     let
-        loadNotes m =
-            -- Load any previously saved notes. The empty list is
-            -- is the default value to use if nothing persisted.
-            Encode.list []
+        loadNotes m defaultValue =
+            Encode.list defaultValue
                 |> Persist.load
-                |> Endpoint.send { m | connected = True }
+                |> Endpoint.send m
 
-        ping m =
-            -- Start periodic pinging to verify server connectivity
+        startPinging m =
             Ping.websocketUp model.pingState
                 |> mapPing m
     in
-        pure model
-            |> andThen loadNotes
-            |> andThen ping
+        loadNotes model []
+            |> andThen startPinging
 
 
 
@@ -111,29 +102,24 @@ nfnUpdate : Notification -> Model -> ( Model, Cmd Msg )
 nfnUpdate notification model =
     case notification of
         Load notes ->
-            pure { model | notes = notes }
+            -- Consider ourselves up at this point - websocket is up and we
+            -- have the server's persisted state. It's ok to start sending
+            -- edits from now on.
+            pure { model | notes = notes, connected = True }
 
         GlobalNfn global ->
-            let
-                log msg =
-                    let
-                        _ =
-                            Debug.log "Warning" msg
-                    in
-                        model
-            in
-                case global of
-                    WebSocketUpNfn ->
-                        websocketUp model
+            case global of
+                WebSocketUpNfn ->
+                    websocketUp model
 
-                    ErrorNfn error ->
-                        pure { model | errors = error :: model.errors }
+                ErrorNfn error ->
+                    pure { model | errors = error :: model.errors }
 
-                    WarningNfn warning ->
-                        pure <| log warning
+                WarningNfn warning ->
+                    pure { model | errors = warning :: model.errors }
 
-                    PongNfn ->
-                        pure { model | pingState = Ping.pongNotification model.pingState }
+                PongNfn ->
+                    pure { model | pingState = Ping.pongNotification model.pingState }
 
 
 
@@ -141,7 +127,7 @@ nfnUpdate notification model =
 
 
 nfnDecoder : String -> Model -> Decoder Notification
-nfnDecoder nfnType model =
+nfnDecoder nfnType _ =
     case nfnType of
         "persist_load" ->
             Persist.decode (Decode.list Decode.string)

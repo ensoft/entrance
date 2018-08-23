@@ -14027,7 +14027,7 @@ var _ensoft$entrance_examples$Main$nfnUpdate = F2(
 			return _ensoft$entrance_examples$Main$pure(
 				_elm_lang$core$Native_Utils.update(
 					model,
-					{notes: _p0._0}));
+					{notes: _p0._0, connected: true}));
 		} else {
 			var log = function (msg) {
 				var _p1 = A2(_elm_lang$core$Debug$log, 'Warning', msg);
@@ -14038,9 +14038,7 @@ var _ensoft$entrance_examples$Main$nfnUpdate = F2(
 				case 'WebSocketUpNfn':
 					return A2(
 						_ensoft$entrance$EnTrance_Endpoint$send,
-						_elm_lang$core$Native_Utils.update(
-							model,
-							{connected: true}),
+						model,
 						_ensoft$entrance$EnTrance_Persist$load(
 							_elm_lang$core$Json_Encode$list(
 								{ctor: '[]'})));

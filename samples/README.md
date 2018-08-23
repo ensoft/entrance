@@ -1,6 +1,8 @@
 # Example apps
 
-This directory includes a few sample apps to help get you started.
+This directory includes a few sample apps to help get you started. They have
+very little functionality, in order to lay bare the "other stuff" that is of
+interest here.
 
 Note that the apps here just pull the production EnTrance packages as
 dependeicies from the public PyPi/elm-package servers, rather than directly
@@ -57,15 +59,17 @@ problems you'll see with this most basic of examples, such as:
  * If you kill or pause the server, there is no visual indication at the
    frontend that the app's functionality is impaired.
 
-All subsequent examples should avoid this sort of limitation.
+Most subsequent examples avoid these sort of limitations.
 
 ## `1_notes`
 
 Pretty much the same app as `0_simple_notes`, but this time in a more
 full-featured setting. This is a better bet for using as the basis for your own
-apps (although still no custom Python yet):
+apps
 
- * Multiple Elm files, in a sensible structure for a very simple app
+ * Multiple Elm files, in a sensible structure (inspired by [Kris
+ Jenkins](http://blog.jenkster.com/2016/04/how-i-structure-elm-apps.html)for a
+ very simple app
 
  * Local static assets
 
@@ -74,3 +78,24 @@ apps (although still no custom Python yet):
    `./build_prod` compiles the changes into  what will be served in production
    on port 8000.
 
+* Continuous monitoring of connectivity with the server, and pausing the
+  frontend when this is impaired. This uses the `EnTrance.Ping` functionality
+  that sends a `ping` message every second to the server, and complains if a
+  `pong` notification is too slow to be received. (Note: when using the Elm
+  debugger, the constant state modifications from this get distracting, so it
+  can be easiest to ctrl-z the server, wait for the "Problem" dialog, click "I
+  don't care", and resume the server. This disables the ping functionality
+  temporarily so you can concentrate on whatever else is causing you issues.)
+
+This is a decent basis for a single-endpoint app, but of course is still a
+rubbish app for taking notes! (eg if two users/tabs edit the list
+simultaneously, bad things will happen; the `EnTrance.Persist` feature used
+here is intended more for things like user preferences that change only
+intermittently.) The app logic is deliberately minimised.
+
+
+### Note
+
+The `package.json` files here pin quite old versions of the packages used for
+providing the hot-reload interactive development environment. They could do
+with a refresh.

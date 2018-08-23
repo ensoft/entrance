@@ -22,22 +22,6 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.css$/,
-        use: [
-          'style-loader',
-          'css-loader',
-        ]
-      },
-      {
-        test: /\.scss$/,
-        use: extractSass.extract({
-                use: [{ loader: "css-loader" },
-                      { loader: "sass-loader" }],
-                // use style-loader in development
-                fallback: "style-loader"
-            })
-      },
-      {
         test: /\.html$/,
         exclude: /node_modules/,
         loader:  'file-loader?name=[name].[ext]',

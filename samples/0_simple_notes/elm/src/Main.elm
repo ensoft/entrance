@@ -103,7 +103,10 @@ nfnUpdate : Notification -> Model -> ( Model, Cmd Msg )
 nfnUpdate notification model =
     case notification of
         Load notes ->
-            pure { model | notes = notes }
+            -- Consider ourselves up at this point - websocket is up and we
+            -- have the server's persisted state. It's ok to start sending
+            -- edits from now on.
+            pure { model | notes = notes, connected = True }
 
         GlobalNfn global ->
             let
@@ -120,7 +123,7 @@ nfnUpdate notification model =
                         -- is the default value to use if nothing persisted.
                         Encode.list []
                             |> Persist.load
-                            |> Endpoint.send { model | connected = True }
+                            |> Endpoint.send model
 
                     ErrorNfn error ->
                         pure { model | errors = error :: model.errors }
@@ -224,8 +227,7 @@ main =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Endpoint.getWebSocket model.endpoint
-        |> Notification.subscription ReceivedJSON
+    Endpoint.subscription model.endpoint ReceivedJSON
 
 
 

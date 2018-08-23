@@ -79,12 +79,10 @@ pingModal pingState =
             ]
 
         visibility =
-            case Ping.displayWarning pingState of
-                True ->
-                    Modal.shown
-
-                False ->
-                    Modal.hidden
+            if Ping.displayWarning pingState then
+                Modal.shown
+            else
+                Modal.hidden
 
         abortMsg =
             PingMsg Ping.StopMonitoring

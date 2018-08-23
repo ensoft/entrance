@@ -1,0 +1,9 @@
+/* 
+ * This is an empty CSS file for use during development (when webpack-dev-server needs
+ * something to serve up to avoid a 404). During development ("yarn dev"), the CSS is
+ * dynamically compiled in as javacsript, for easy iteration.
+ *
+ * For a production build ("build_prod" script), a static elm.css file is generated
+ * with all the CSS, and this is put in the svr/static directory instead of this. So
+ * there is no performance penalty in production.
+ */

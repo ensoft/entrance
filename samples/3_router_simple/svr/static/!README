@@ -1,0 +1,10 @@
+!!
+!! Do NOT manually put any files in this directory - they WILL get
+!! deleted! Files here are committed to the git repo just so the
+!! production server is fully ready to go, not for editing. If you
+!! find yourself having to change file permissions, that's a hint
+!! you're editing the wrong files.
+!!
+!! This is populated by running ./build_prod from the elm directory -
+!! last run at Thu 23 Aug 2018 08:17:01 BST.
+!!

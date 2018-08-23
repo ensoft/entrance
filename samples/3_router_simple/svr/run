@@ -1,0 +1,35 @@
+#!venv/bin/python3
+#
+# Start the server as a separate process, and restart if requested by the client
+
+import os, shutil, sys
+from multiprocessing import Process, freeze_support
+
+def run(*args):
+    """
+    Run one instance of the server in a separate process
+    """
+    from entrance.__main__ import main
+    main(*args)
+
+if __name__ == '__main__':
+    # Allow installer support
+    freeze_support()
+
+    # Add entrance to the start of our path, so if we're mid-development then
+    # we don't need to re-install in the venv to see changes
+
+    # Install a starter preferences file if there isn't already one here
+    if not os.path.isfile('prefs.json'):
+        shutil.copyfile(getattr(sys, '_MEIPASS', '.') + '/sample-prefs.json', 'prefs.json')
+
+    # Spawn a server, and spawn a new one if requested by the client
+    # (indicated by exit code 42)
+    while True:
+        p = Process(target=run, args=sys.argv[1:])
+        p.start()
+        try: p.join()
+        except: pass
+        if p.exitcode != 42:
+            sys.exit(p.exitcode)
+        print('\nRestarting...\n')

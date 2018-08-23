@@ -1,0 +1,16 @@
+#
+# Make a single standalone binary
+#
+set -e
+
+rm -rf dist
+venv/bin/python3 -m pip install -q pyinstaller
+
+# Add '--add-data logging.yml:.' to below if you use it
+files="--add-data config.yml:. --add-data sample-prefs.json:."
+dirs="--add-data static:static"
+venv/bin/python3 -m PyInstaller $files $dirs -F run
+
+OUTPUT=ccdemo-$(uname -m)-$(uname -p)
+mv -f dist/run dist/$OUTPUT
+ls -l dist/$OUTPUT

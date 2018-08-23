@@ -1,9 +1,8 @@
 module EnTrance.Feature
     exposing
-        ( startFeature
-        , stopFeature
+        ( start
+        , stop
         , MaybeSubscribe(..)
-        , defaultTarget
         , decodeConnectionState
         )
 
@@ -11,10 +10,9 @@ module EnTrance.Feature
 
 See the EnTrance design notes document for background on dynamic features.
 
-@docs startFeature
-@docs stopFeature
+@docs start
+@docs stop
 @docs MaybeSubscribe
-@docs defaultTarget
 @docs decodeConnectionState
 -}
 
@@ -30,8 +28,8 @@ import EnTrance.Endpoint as Endpoint
     |> Endpoint.send model
 ```
 -}
-startFeature : String -> MaybeSubscribe -> Endpoint.Params
-startFeature feature subscribe =
+start : String -> MaybeSubscribe -> Endpoint.Params
+start feature subscribe =
     let
         bool =
             case subscribe of
@@ -59,8 +57,8 @@ Arguments:
     |> Endpoint.send model
 ```
 -}
-stopFeature : String -> Endpoint.Params
-stopFeature feature =
+stop : String -> Endpoint.Params
+stop feature =
     Endpoint.request "stop_feature"
         |> Endpoint.addString "feature" feature
 
@@ -73,15 +71,6 @@ as starting the feature itself.
 type MaybeSubscribe
     = SubscribeToConState
     | IgnoreConState
-
-
-{-| An arbitrary string that can be used type-safely to provide a consistent
-target string, for those features or endpoints that don't require multiple
-targets.
--}
-defaultTarget : String
-defaultTarget =
-    "defaultTarget"
 
 
 {-| Decode a `connection_state` notification, when these are
