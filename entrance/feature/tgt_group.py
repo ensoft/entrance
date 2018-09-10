@@ -3,6 +3,8 @@
 # Copyright (c) 2018 Ensoft Ltd
 
 import asyncio, time
+
+from .._util import events
 from .tgt_base import TargetFeature
 
 class TargetGroupFeature(TargetFeature):
@@ -36,7 +38,7 @@ class TargetGroupFeature(TargetFeature):
         Initiate all the connections to this target
         """
         for child in self.children:
-            asyncio.ensure_future(child.connect(conn_factory))
+            events.create_checked_task(child.connect(conn_factory))
 
     def add_feature(self, feature):
         """
@@ -47,7 +49,7 @@ class TargetGroupFeature(TargetFeature):
         if self.connect_requested:
             # A connect request has already been made. So the late-arrival
             # feature should try to connect now too.
-            asyncio.ensure_future(feature.connect(self.conn_factory))
+            events.create_checked_task(feature.connect(self.conn_factory))
 
     def remove_feature(self, feature):
         """

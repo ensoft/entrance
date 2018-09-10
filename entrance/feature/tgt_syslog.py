@@ -3,6 +3,8 @@
 # Copyright (c) 2018 Ensoft Ltd
 
 import asyncio, re, time
+
+from .._util import events
 from .tgt_base import TargetFeature
 
 class SyslogFeature(TargetFeature):
@@ -52,7 +54,7 @@ class SyslogFeature(TargetFeature):
 
         # We need to return at this point, so the connection transitions
         # from FINALIZING to CONNECTED, so tee up our mini event loop for later
-        asyncio.ensure_future(self._event_loop(regexp, nfn))
+        events.create_checked_task(self._event_loop(regexp, nfn))
 
     async def _event_loop(self, regexp, nfn):
         """

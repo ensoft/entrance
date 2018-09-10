@@ -5,6 +5,9 @@
 import asyncio
 from enum import IntEnum, unique
 
+from .._util import events
+
+
 @unique
 class ConState(IntEnum):
     # Order is important: overall connection state is the max of the
@@ -94,4 +97,4 @@ class Connection():
                 if self.finalizer is not None:
                     await self.finalizer()
                 await self._set_state(ConState.CONNECTED)
-            asyncio.ensure_future(finalize())
+            events.create_checked_task(finalize())
