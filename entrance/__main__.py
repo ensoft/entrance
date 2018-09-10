@@ -4,7 +4,9 @@
 
 import argparse, logging, logging.config, sys
 import sanic, sanic.response, yaml
+
 from . import WebsocketHandler
+from ._util import logger
 
 log = logging.getLogger(__name__)
 location = getattr(sys, '_MEIPASS', '.') + '/' # where pre-canned files live
@@ -82,6 +84,7 @@ def main(*args, task=None):
 
     # Go
     logging.config.dictConfig(logging_config)
+    logging.setLogRecordFactory(logger.FormattedLogRecord)
     start(main_config, task)
     log.info('Closing down gracefully')
 
