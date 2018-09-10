@@ -3,7 +3,9 @@
 # Copyright (c) 2018 Ensoft Ltd
 
 import asyncio, logging, time
-from entrance.connection import connection_factory_by_name, ConState, Connection
+
+from ..connection import connection_factory_by_name, ConState, Connection
+from .._util import events
 from .dyn_base import DynamicFeature
 
 log = logging.getLogger(__name__)
@@ -87,7 +89,7 @@ class TargetFeature(DynamicFeature):
         # Connections can be removed mid-iteration if they disconnect promptly
         safe_iter = list(self.children)
         for child in safe_iter:
-            asyncio.ensure_future(child.disconnect())
+            events.create_checked_task(child.disconnect())
 
     def add_connection(self, connection, from_scratch=False):
         """
