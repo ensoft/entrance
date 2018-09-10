@@ -32,7 +32,7 @@ class ThreadedCLIConnection(ThreadedConnection):
         return await self._request('settimeout', override, timeout)
 
     # Regexps for _expect_prompt below
-    _prompt = re.compile(r'(.*)RP/0/0/CPU0:[^\r\n]*?#', re.DOTALL)
+    _prompt = re.compile(r'(.*)RP/0/(RP)?0/CPU0:[^\r\n]*?#', re.DOTALL)
     _interesting = re.compile(r'[^\n]*\n[^\n]* UTC\r\n(.*)', re.DOTALL)
 
     async def expect_prompt(self, strip_top=False, override=False):

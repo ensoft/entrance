@@ -5,7 +5,9 @@
 
 import logging, re, threading, traceback
 import asyncio, janus
-from entrance.connection.base import Connection, ConState
+
+from .base import Connection, ConState
+from .._util import events
 
 log = logging.getLogger(__name__)
 
@@ -37,7 +39,7 @@ class ThreadedConnection(Connection):
                                        target=self._thread_main,
                                        kwargs=kwargs)
         self.thread.start()
-        self.event_loop_task = asyncio.ensure_future(self._event_loop())
+        self.event_loop_task = events.create_checked_task(self._event_loop())
 
     async def disconnect(self):
         """
