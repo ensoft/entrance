@@ -3,6 +3,7 @@
 # Copyright (c) 2018 Ensoft Ltd
 
 import asyncio
+import logging
 from enum import IntEnum, unique
 
 from .._util import events
@@ -57,6 +58,14 @@ class Connection():
     """
     Base class representing a single router connection
     """
+
+    # Internal attributes:
+    #
+    # _log
+    #   Logger object
+    #
+    _log = None
+
     def __init__(self, factory, name, finalizer, **kwargs):
         self.factory = factory
         self.name = name
@@ -64,6 +73,8 @@ class Connection():
         self.state = ConState.DISCONNECTED
         self.kwargs = kwargs
         self.state_listeners = []
+        self._log = logging.getLogger(
+            "{}.{}-{}".format(__name__, type(self).__name__, name))
 
     def add_state_listener(self, listener):
         """
@@ -84,17 +95,20 @@ class Connection():
         Helper method to set the connection state.
         SUBCLASSES MUST ALWAYS USE THIS, DON'T JUST SET THE STATE DIRECTLY
         """
-        # Actually change state
+        # Actually change state and then notify listeners.
+        old_state = self.state
         self.state = state
-
-        # Notify listeners
         for listener in self.state_listeners:
             await listener(self)
+        self._log.debug("changed state from {} to {}; notified {} listeners",
+                        old_state.name, state.name, len(self.state_listeners))
 
         # Call the finalizer if required
         if state == ConState.FINALIZING:
             async def finalize():
+                self._log.debug("started finalizing")
                 if self.finalizer is not None:
                     await self.finalizer()
                 await self._set_state(ConState.CONNECTED)
+                self._log.debug("finished finalizing")
             events.create_checked_task(finalize())
