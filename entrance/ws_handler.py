@@ -5,8 +5,10 @@
 from collections import defaultdict
 import asyncio, logging, re, traceback
 import ujson
-from entrance.connection import ConState
-from entrance.feature import *
+
+from .connection import ConState
+from .feature import *
+from ._util import events
 
 log = logging.getLogger(__name__)
 
@@ -90,7 +92,7 @@ class WebsocketHandler():
             try:
                 key = _mktuple(req_type, endpoint, target)
                 feature = self.request_map_optional[key]
-                asyncio.ensure_future(feature.handle(request))
+                events.create_checked_task(feature.handle(request))
             except KeyError:
                 log.warning('Un-handleable request {}'.format(request))
                 log.debug('key = {}, request_map_optional = {}'.format(
