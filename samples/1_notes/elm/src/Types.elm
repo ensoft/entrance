@@ -1,11 +1,8 @@
-module Types exposing (..)
+module Types exposing (Model, Msg(..))
 
-{-| Model, Msg and Notification types
--}
+import EnTrance.Channel as Channel
+import EnTrance.Types exposing (RpcData)
 
-import EnTrance.Endpoint exposing (Endpoint)
-import EnTrance.Notification exposing (GlobalNfn)
-import EnTrance.Ping as Ping
 
 
 -- MODEL
@@ -15,32 +12,21 @@ type alias Model =
     { editText : String
     , notes : List String
     , errors : List String
+    , result : RpcData ()
     , connected : Bool
-    , pingState : Ping.State
-    , endpoint : Endpoint
+    , sendPort : Channel.SendPort Msg
     }
 
 
 
--- MESSAGES AND NOTIFICATIONS
+-- MESSAGES
 
 
 type Msg
     = Input String
     | Save
     | ClearAll
-    | ReceivedJSON String
-    | PingMsg Ping.Msg
-
-
-type Notification
-    = Load (List String)
-    | GlobalNfn GlobalNfn
-
-
-
--- DATA PROVIDED BY JAVASCRIPT
-
-
-type alias Flags =
-    { websocket : String }
+    | Loaded (List String)
+    | Saved (RpcData ())
+    | ChannelIsUp Bool
+    | Error String

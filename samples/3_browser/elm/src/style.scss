@@ -1,0 +1,19 @@
+/* Styling the result area */
+
+/* Add a bit of vertical space */
+body, .input-group { margin: 1.4em 0 };
+
+/* Boring messages should be nice and dull */
+.empty { color: grey; }
+
+/* Error messages should be nice and alarming */
+.error { color: red; font-weight: bold; }
+
+/* Shrink the default table size to get more entries per page */
+td, th { padding: 0.2em !important; }
+
+/* Make directories look clickable */
+.directory:hover {
+  text-decoration: underline;
+  background-color: #ffe;
+}

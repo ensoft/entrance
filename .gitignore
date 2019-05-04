@@ -5,8 +5,11 @@ elm-stuff/
 documentation.json
 node_modules/
 yarn.lock
-debug.log
+debug.log*
 notes.json
 venv/
 prefs.json
 .DS_Store
+.cache/
+run.spec
+package-lock.json

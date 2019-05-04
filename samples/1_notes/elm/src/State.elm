@@ -1,67 +1,76 @@
-module State exposing (initialModel, update, subscriptions)
+port module State exposing
+    ( initialModel
+    , subscriptions
+    , update
+    )
 
-import Dict
+import EnTrance.Channel as Channel
+import EnTrance.Feature.Persist as Persist
 import Json.Decode as Decode exposing (Decoder)
 import Json.Encode as Encode
-import Response exposing (Response, mapBoth, res)
-import EnTrance.Endpoint as Endpoint exposing (defaultEndpoint)
-import EnTrance.Notification as Notification exposing (GlobalNfn(..))
-import EnTrance.Persist as Persist
-import EnTrance.Ping as Ping
-import Types exposing (..)
+import RemoteData exposing (RemoteData(..))
+import Response exposing (pure)
+import Types exposing (Model, Msg(..))
+
+
+
+{- PORTS
+
+   - `appSend` - send message to the server
+   - `appRecv` - receive a notification from the server
+   - `appIsUp` - get notifications of up/down status
+   - `errorRecv` - get any global errors
+-}
+
+
+port appSend : Channel.SendPort msg
+
+
+port appRecv : Channel.RecvPort msg
+
+
+port appIsUp : Channel.IsUpPort msg
+
+
+port errorRecv : Channel.ErrorRecvPort msg
+
 
 
 -- INITIAL STATE
 
 
-initialModel : Flags -> ( Model, Cmd Msg )
-initialModel flags =
-    pure
-        { editText = ""
-        , notes = []
-        , errors = []
-        , connected = False
-        , pingState = Ping.init flags.websocket
-        , endpoint = Endpoint.default flags.websocket
-        }
+initialModel : Model
+initialModel =
+    { editText = ""
+    , notes = []
+    , errors = []
+    , result = NotAsked
+    , connected = False
+    , sendPort = appSend
+    }
 
 
-subscriptions : Model -> Sub Msg
-subscriptions model =
+subscriptions : Sub Msg
+subscriptions =
     Sub.batch
-        [ Endpoint.subscription model.endpoint ReceivedJSON
-        , Ping.subscriptions model.pingState |> Sub.map PingMsg
+        [ errorRecv Error
+        , appIsUp ChannelIsUp
+        , Channel.sub appRecv Error notifications
         ]
 
 
-websocketUp : Model -> ( Model, Cmd Msg )
-websocketUp model =
-    let
-        loadNotes m defaultValue =
-            Encode.list defaultValue
-                |> Persist.load
-                |> Endpoint.send m
-
-        startPinging m =
-            Ping.websocketUp model.pingState
-                |> mapPing m
-    in
-        loadNotes model []
-            |> andThen startPinging
-
-
-
--- ENDPOINT CONFIG
-
-
-{-| Just two endpoints: the Global one for things like top-level errors, and
-one other default endpoint for our actual app logic.
+{-| The notifications we want to decode
 -}
-cfg : Notification.Config Model Notification
-cfg =
-    Notification.Config
-        GlobalNfn
-        (Dict.fromList [ ( defaultEndpoint, nfnDecoder ) ])
+notifications : List (Decoder Msg)
+notifications =
+    [ Persist.decodeLoad decodeNotes Loaded
+    , Persist.decodeSave Saved
+    ]
+
+
+decodeNotes : Decoder (List String)
+decodeNotes =
+    Decode.list Decode.string
 
 
 
@@ -73,88 +82,42 @@ update msg model =
     let
         updateNotes newNotes =
             -- Update the notes on both client and server with a new value
-            Encode.list (List.map Encode.string newNotes)
-                |> Persist.save
-                |> Endpoint.send { model | notes = newNotes, editText = "" }
+            Persist.save (Encode.list Encode.string newNotes)
+                |> Channel.sendSimpleRpc
+                    { model | notes = newNotes, editText = "" }
     in
-        case msg of
-            Input editText ->
-                pure { model | editText = editText }
+    case msg of
+        Input editText ->
+            pure { model | editText = editText }
 
-            Save ->
-                updateNotes (model.editText :: model.notes)
+        Save ->
+            updateNotes (model.editText :: model.notes)
 
-            ClearAll ->
-                updateNotes []
+        ClearAll ->
+            updateNotes []
 
-            ReceivedJSON json ->
-                nfnUpdate (Notification.decode cfg model json) model
-
-            PingMsg subMsg ->
-                Ping.update subMsg model.pingState |> mapPing model
-
-
-
--- UPDATE FROM A NOTIIFCATION
-
-
-nfnUpdate : Notification -> Model -> ( Model, Cmd Msg )
-nfnUpdate notification model =
-    case notification of
-        Load notes ->
+        Loaded notes ->
             -- Consider ourselves up at this point - websocket is up and we
             -- have the server's persisted state. It's ok to start sending
             -- edits from now on.
             pure { model | notes = notes, connected = True }
 
-        GlobalNfn global ->
-            case global of
-                WebSocketUpNfn ->
-                    websocketUp model
+        Saved (Failure error) ->
+            -- Save failures are uncommon, so just turn them into global errors
+            -- rather than add UI just for this
+            update (Error error) model
 
-                ErrorNfn error ->
-                    pure { model | errors = error :: model.errors }
+        Saved result ->
+            pure { model | result = result }
 
-                WarningNfn warning ->
-                    pure { model | errors = warning :: model.errors }
+        ChannelIsUp True ->
+            -- Websocket up: load any previously saved notes. Empty list
+            -- is the default value to use if nothing persisted.
+            Persist.load (Encode.list Encode.string [])
+                |> Channel.send model
 
-                PongNfn ->
-                    pure { model | pingState = Ping.pongNotification model.pingState }
+        ChannelIsUp False ->
+            pure { model | connected = False }
 
-
-
--- JSON DECODERS
-
-
-nfnDecoder : String -> Model -> Decoder Notification
-nfnDecoder nfnType _ =
-    case nfnType of
-        "persist_load" ->
-            Persist.decode (Decode.list Decode.string)
-                |> Decode.map Load
-
-        unknown_type ->
-            Decode.fail <| "Unknown nfn_type: " ++ unknown_type
-
-
-
--- Helpers (pure and andThen will be in elm-response soon)
-
-
-pure : Model -> ( Model, Cmd msg )
-pure model =
-    ( model, Cmd.none )
-
-
-andThen : (model -> Response model a) -> Response model a -> Response model a
-andThen update ( model1, cmd1 ) =
-    let
-        ( model2, cmd2 ) =
-            update model1
-    in
-        res model2 (Cmd.batch [ cmd1, cmd2 ])
-
-
-mapPing : Model -> ( Ping.State, Cmd Ping.Msg ) -> ( Model, Cmd Msg )
-mapPing model =
-    mapBoth (\x -> { model | pingState = x }) PingMsg
+        Error error ->
+            pure { model | errors = error :: model.errors }

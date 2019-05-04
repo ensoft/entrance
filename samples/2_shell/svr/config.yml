@@ -1,0 +1,20 @@
+#
+# Browser app configuration
+#
+
+#
+# How to start the app
+#
+start:
+  host: 0.0.0.0
+  port: 8000
+  static_dir: static
+
+#
+# Feature configuration
+#
+features:
+  core: {}
+
+  # Our app-local feature!
+  insecure_shell: {}

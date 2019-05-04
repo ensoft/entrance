@@ -1,0 +1,14 @@
+{
+    "name": "entrance-ws",
+    "version": "1.1.0",
+    "description" : "WebSocket handler to use EnTrance with Elm 0.19",
+    "homepage": "https://github.com/ensoft/entrance",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+	"url": "https://github.com/ensoft/entrance.git"
+    },
+    "bugs": {
+        "url": "https://github.com/ensoft/entrance/issues"
+    }
+}

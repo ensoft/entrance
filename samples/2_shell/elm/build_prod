@@ -1,0 +1,51 @@
+#!/bin/bash
+#
+# Build all the frontend assets to run in production mode.
+#
+# You always get the Elm debugger when using 'yarn dev' and
+# never get it when running in production.
+
+#
+# Build the Elm app
+#
+rm -f dist/*
+if [ ! -d node_modules ]; then
+  yarn
+fi
+yarn build || exit 1
+
+#
+# Copy over this and other assets
+#
+S=../svr/static
+mkdir $S 2>/dev/null
+rm -f $S/*
+cat > $S/!README <<-EOF
+!!
+!! Do NOT manually put any files in this directory - they WILL get
+!! deleted! Files here are committed to the git repo just so the
+!! production server is fully ready to go, not for editing. If you
+!! find yourself having to change file permissions, that's a hint
+!! you're editing the wrong files.
+!!
+!! This is populated by running ./build_prod from the elm directory.
+!!
+EOF
+cp dist/* $S
+chmod 444 $S/*
+
+#
+# Do some quick sanity checks
+#
+
+# elm-analyse
+if which elm-analyse > /dev/null
+then
+  echo "Running elm-analyse..."
+  elm-analyse | grep -v "^INFO: "
+else
+  echo "If you haven't got elm-analyse, run 'yarn global add elm-analyse'"
+fi
+
+# grep for @@@
+find src ../svr -name \*.elm -o -name \*.js -o -name \*.py | xargs grep @@@

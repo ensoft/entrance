@@ -1,0 +1,10 @@
+/* Styling the result area */
+
+/* Add a bit of vertical space */
+body, .input-group { margin: 1.4em 0 };
+
+/* Pick some suitable colours */
+.empty { color: grey; }
+.error { color: red; font-weight: bold; }
+.stdout { color: green; }
+.stderr { color: brown; }

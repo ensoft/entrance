@@ -1,0 +1,23 @@
+{
+    "default": {
+        "connection": {
+            "auto_connect": true,
+            "params": {
+                "auth_is_password": true,
+                "host": "",
+                "netconf_port": "830",
+                "secret": "",
+                "ssh_port": "22",
+                "username": ""
+            }
+        },
+        "config": {
+            "example": "hostname new-hostname\n\ninterface GigabitEthernet 0/0/0/0\n  ipv6 address fe80::1/64\n\ninterface GigabitEthernet 0/0/0/1\n  load-interval 45"
+        },
+        "netconf": {
+            "editconf-/32-and-load-int-45-and-hostname": "<config xmlns:xc=\"urn:ietf:params:xml:ns:netconf:base:1.0\">\n\n  <!--HOSTNAME -->\n\n  <host-names xmlns=\"http://cisco.com/ns/yang/Cisco-IOS-XR-shellutil-cfg\">\n    <host-name>badger2</host-name>\n  </host-names>\n\n  <!-- INTERFACE CONFIG -->\n\n  <interface-configurations xmlns=\"http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg\">\n   <interface-configuration>\n    <active>act</active>\n    <interface-name>GigabitEthernet0/0/0/0</interface-name>\n    <ipv4-network xmlns=\"http://cisco.com/ns/yang/Cisco-IOS-XR-ipv4-io-cfg\">\n     <addresses>\n      <primary>\n\n    <!-- IPv4 ADDRESS -->\n\n       <address>9.0.0.2</address>\n       <netmask>255.255.255.255</netmask>\n      </primary>\n     </addresses>\n    </ipv4-network>\n    <statistics xmlns=\"http://cisco.com/ns/yang/Cisco-IOS-XR-infra-statsd-cfg\">\n\n    <!-- LOAD INTERVAL -->\n\n     <load-interval>45</load-interval>\n    </statistics>\n   </interface-configuration>\n  </interface-configurations> \n</config>",
+            "get-eth-stats": "<filter type = \"subtree\">\n  <ethernet-interface xmlns=\"http://cisco.com/ns/yang/Cisco-IOS-XR-drivers-media-eth-oper\">\n  </ethernet-interface>\n</filter>",
+            "getconf-one-interface": "<filter type = \"subtree\">\n  <interface-configurations xmlns=\"http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg\">\n    <interface-configuration>\n      <interface-name>\n        GigabitEthernet0/0/0/0\n      </interface-name>\n    </interface-configuration>\n  </interface-configurations>\n</filter>"
+        }
+    }
+}

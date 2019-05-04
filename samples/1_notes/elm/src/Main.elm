@@ -3,20 +3,22 @@ module Main exposing (main)
 {-| Single-module example EnTrance app - keep some notes
 -}
 
-import Html
-import Types exposing (..)
-import State exposing (..)
+import Browser
+import Response exposing (pure)
+import State exposing (initialModel, subscriptions, update)
+import Types exposing (Model, Msg)
 import View exposing (view)
+
 
 
 -- MAIN
 
 
-main : Program Flags Model Msg
+main : Program () Model Msg
 main =
-    Html.programWithFlags
-        { init = initialModel
+    Browser.element
+        { init = \_ -> pure initialModel
         , view = view
         , update = update
-        , subscriptions = subscriptions
+        , subscriptions = \_ -> subscriptions
         }

@@ -2,114 +2,164 @@
 
 This directory includes a few sample apps to help get you started. They have
 very little functionality, in order to lay bare the "other stuff" that is of
-interest here.
+interest here:
 
-Note that the apps here just pull the production EnTrance packages as
-dependeicies from the public PyPi/elm-package servers, rather than directly
-using any changes that might be in this local repo.
+ - [Sample 1](1_notes) is a very basic note-taking app, showing a minimal Elm
+   app with no custom server-side Python.
+ - [Sample 2](2_shell) lets you execute arbitrary shell commands on the server,
+   and shows a minimal example of writing [your own server-side Python
+   feature](2_shell/svr/run.py) and the corresponding [Elm client
+   library](2_shell/elm/src/InsecureShell.elm).
+ - [Sample 3](3_browser) provides a basic directory browser for exploring the
+   server-side filesystem layout, showing a slightly more complex example of a
+   [custom server-side Python feature](3_browser/svr/run.py) and corresponding
+   [Elm client library](3_browser/elm/src/ReadDir.elm).
+ - [Sample 4](4_router_simple) is a basic but full-featured application for
+   interacting with IOS-XR routers. It shows how to use some more
+   "production-oriented" features, such as multiple channels, server restarts,
+   and packaging up the entire application into a single binary for easy
+   distribution.
 
-## `0_simple_notes`
+Even though they are simple, they should exhibit the robustness properties of
+the EnTrance framework. For all examples, you can try things like:
 
-A minimal EnTrance application. Has just a single Elm file, no CSS, no static
-assets, no Python. Intended for reading first, to get the hang of how things
-are put together.
+ - killing the server process
+ - pausing (ctrl-z) the server process
+ - spawning multiple client tab/windows
+ - changing the messaging on client and/or server to introduce bugs
 
-Don't use this as the basis for a real project though, since it's too limited
-(see below for deatils). Even so, there are still some interesting development
-features:
+and even though there is almost no explicit code for such cases, you should see
+a reasonable representation to the app user of what's going on. They also all
+include SASS for CSS styling, static web assets like `png` files, and a dual
+dev/prod means of development:
 
-* You run a 'production build' by going to the `svr` directory, running
-  `./make-venv` and following the instructions (`venv/bin/python3 -m
-  entrance`.) This serves the version of the Elm app that has been previously
-  compiled into `svr/static/app.js` on port 8000.
+- a "dev build" (with `yarn dev`, see below) runs on port 3000 by default, and
+  supports live updates on the client-side. So you can make a change to a
+  `.elm`/`.scss`/`.png`/whatever file, and near-instantly see the effect in the
+  running application in your browser after you save the file. The Elm debugger
+  is also enabled.
 
-* The must be a `config.yml` file to specify enabled capabilities (just use the
-  default one provided). You can also override common things like the port number
-  using command-line overrides - use `-h` to see. You can also optionally specify
-  a `logging.yml` file that gives fine-grained control over logging.
+- a "prod build" (with `./build_prod`, see below) runs on port 8000 by default,
+  is compiled with optimisation and no Elm debugger, and can optionally be
+  packaged up with the server into a single binary.
 
-* For interactive development, run the server, but then go to the `elm`
-  directory and run `yarn dev` (a simple `yarn` is required once for a fresh
-  clone; you also need to have [yarn
-  installed](https://yarnpkg.com/lang/en/docs/install/)). If you use port 3000,
-  you will see a dynamic compilation of the Elm source, that usually auto-reloads
-  whenever you hit edit an Elm source file. (Sometimes a manual refresh is
-  required.) You also have access to the Elm debugger in this mode. (Note that
-  this mode of development requires the server to be running on port 8000.)
+In all cases, the `svr` directory includes a mandatory `config.yml` file to
+specify enabled capabilities. (I suspect it would be better to be able to omit
+this, and have a sensible default, but this isn't the case right now.) You can
+override common things like the port number (default 8000) either here or using
+command-line overrides - use `-h` to see.
 
-* Once you're happy with some Elm changes, run `./build_prod` to update the
-  copy of `app.js` in `svr/static` and commit your code.
+You can also optionally provide a `logging.yml` file in the same `svr`
+directory that gives fine-grained control over server logging. The default (if
+you don't) is to be fairly chatty on the console, and really chatty into a
+rotated file called `debug.log`. In particular, if you see signs of a Python
+exception or other problem on the console, then looking in the `debug.log` file
+should give you all the available context to help debug that.
 
-All these development workflows apply (sometimes with variations) to all the
-more complex projects too. The other complex projects also avoid a bunch of
-problems you'll see with this most basic of examples, such as:
+## How to run them
 
- * You'll probably get server errors about no `favicon.ico` when you point a
-   browser at it - this is a (benign) side-effect of having no static assets.
-   In general you'll want these.
- 
- * Another side-effect of no static assets is that you'll need Internet
-   connectivity to fetch the Bootstrap CSS file from a CDN. Later examples
-   always bundle this locally, so you can run the app from an unconnected
-   laptop.
+The repo already contains a static `.js` file including the compiled Elm code,
+so all you need to run a sample is Python (version 3.5 or later). Just:
 
- * If the network or server is slow, there is no visual indication on the
-   frontend when an operation is taking a long time.
+ - cd to the `svr` directory for a sample
+ - run `./make-venv` to install all the dependencies (including the `entrance`
+   Python package itself) from PyPi
+ - run either `./run` or `./run.py` (only one exists for each sample)
 
- * If you kill or pause the server, there is no visual indication at the
-   frontend that the app's functionality is impaired.
+If you're simply editing server-side Python, then this is sufficient. More
+likely, you want to edit Elm too. In this case, first (optionally but highly
+recommended) get a good Elm editor environment:
 
-Most subsequent examples avoid these sort of limitations.
+- Install the [latest Elm compiler](https://guide.elm-lang.org/install.html)
+  (mostly just for editor and repl support - the one used for building the app
+  will be installed in a local sandbox by yarn)
+- Install [elm-format](https://github.com/avh4/elm-format/releases/) and
+  configure your editor to use it on file save
 
-## `1_notes`
+To build a development image:
 
-Pretty much the same app as `0_simple_notes`, but this time in a more
-full-featured setting. This is a better bet for using as the basis for your own
-apps
+- Ensure you have a reasonably recent
+  [node installation](https://nodejs.org/en/download/)
+- Ensure you have [yarn installed](https://yarnpkg.com/lang/en/docs/install/)
+- cd to the `elm` directory for a sample
+- run `yarn` once to initialise everything
+- then run `yarn dev` to get a development server for the frontend
+- manually start the Python server using `./run` or `./run.py` from the
+  `svr` directory as above to provide the backend
+- point your web browser at http://localhost:1234
 
- * Multiple Elm files, in a sensible structure (inspired by [Kris
- Jenkins](http://blog.jenkster.com/2016/04/how-i-structure-elm-apps.html)for a
- very simple app
+When you're ready to commit, build a production image:
 
- * Local static assets
+- run `./build_prod` to create assets for the standalone server
+- test by running the Python server as above and going to http://localhost:8000
+- `git commit` if everything looks good
 
- * Integrated CSS (using [SASS](https://sass-lang.com/guide)). So development
-   on port 3000 should immediately display changes to `.scss` files, and
-   `./build_prod` compiles the changes into  what will be served in production
-   on port 8000.
+The development server and runtime asset compilation is provided by
+[Parcel](https://parceljs.org). By design this has minimal configuration and
+operates somewhat by convention, so if you deviate from the samples, you may
+need to look up up how it handles your particular assets.
 
-* Continuous monitoring of connectivity with the server, and pausing the
-  frontend when this is impaired. This uses the `EnTrance.Ping` functionality
-  that sends a `ping` message every second to the server, and complains if a
-  `pong` notification is too slow to be received. (Note: when using the Elm
-  debugger, the constant state modifications from this get distracting, so it
-  can be easiest to ctrl-z the server, wait for the "Problem" dialog, click "I
-  don't care", and resume the server. This disables the ping functionality
-  temporarily so you can concentrate on whatever else is causing you issues.)
+One artefact of the way Parcel works is that almost all the assets in the
+`svr/static` directory get an 8-digit hex hash code added to their filenames.
+This is intended for production use with CDNs (where different file contents
+get a different filename) but in the samples is configured to be static (so we
+can commit the assets into the repo without the filename changing every time).
+It isn't possible to just turn the hashing fully off (at the time of writing).
 
-This is a decent basis for a single-endpoint app, but of course is still a
-rubbish app for taking notes! (eg if two users/tabs edit the list
-simultaneously, bad things will happen; the `EnTrance.Persist` feature used
-here is intended more for things like user preferences that change only
-intermittently.) The app logic is deliberately minimised.
 
-## `3_router_simple`
+# Testing local changes to the EnTrance library packages
 
-This is a multi-endpoint app, showing how to construct a complex app out of
-smaller parts, each with their own `Model`/`Msg`/`Notification` types,
-`update`/`nfnUpdate`/`view` functions, CSS styling etc. It also demonstrates
-having top-level "toasts" (temporary notifications that disappear after a few
-seconds), target features, complex preference handling, and various other more
-realistic features.
+The sample apps here just pull the production EnTrance packages as dependencies
+from the public package servers:
 
-It also currently shows how to turn the debugger on and off interactively,
-unless the `./build_prod` script was supplied with a `nodebug` argument. This
-isn't actually much of a win in practice, so will probably be simplified in
-future to be like the earlier examples (debugger present on port 3000 for
-development, debugger disabled on port 8000 for production).
+ * A [Python package on PyPi](https://pypi.org/project/entrance/) that
+   implements all the generic/built-in server functionality.
 
-### Note
+ * An [Elm package on elm-package](https://package.elm-lang.org/packages/ensoft/entrance/latest/)
+   that implements all the generic/built-in client functionality.
 
-The `package.json` files here pin quite old versions of the packages used for
-providing the hot-reload interactive development environment. They could do
-with a refresh.
+ * A [Javascript package on npm](https://www.npmjs.com/package/entrance-ws)
+   that implements ports for WebSockets (since the Elm package was removed
+   in 0.19).
+
+However, you might be using them to test local changes to one or more of these
+packages. If that's the case, then it's easy to temporarily change them to
+include the local code, rather than fetching the production version from a
+public package repository.
+
+Remember to reverse these modifications before finishing up your changes :)
+
+## Python
+
+In the `svr` directory, `rm -rf venv`, and rather than call `./make-venv`,
+instead do:
+
+        python3 -m venv venv
+        venv/bin/pip3 install --upgrade ../../../python
+
+where the `../../..` is the path to the root of the repo. You can re-run the
+second line to update the venv with any subsequent changes.
+
+## Elm
+
+In the `elm` directory, remove the `ensoft/entrance` entry from `elm.json`, and
+`ln -s ../../../elm/src/EnTrance src`.
+
+You'll need to temporarily include the following dependencies in your app if
+you don't have them (`elm install remotedata` will do the trick):
+
+  - elm/bytes
+  - elm/file
+  - elm/http
+  - krisajenkins/remotedata
+
+## Javascript
+
+In the `elm/src` directory, `ln -s ../../../../npm/index.js ws.js`, and in
+`main.js`, change the line:
+
+        import { handleWebsocket } from 'entrance-ws';
+
+to:
+
+        import { handleWebsocket } from './ws.js';
