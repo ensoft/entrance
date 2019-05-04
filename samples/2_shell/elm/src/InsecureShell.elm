@@ -5,10 +5,11 @@ module InsecureShell exposing
     )
 
 {-| This module provides a client-side typesafe interface to the
-`insecure_shell` server-side feature, that runs an arbitrary shell command on the server and sends back the result.\\
+`insecure_shell` server-side feature, that runs an arbitrary shell command on
+the server and sends back the result.
 
 The feature is bespoke to this sample app (see `svr/run.py` for the other half)
-but this module is written as a standalone library that can be re-used as is.
+but this is written as a standalone module that can be re-used as is.
 
 @docs CmdResult
 @docs cmd

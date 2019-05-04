@@ -8,12 +8,12 @@ interest here:
    app with no custom server-side Python.
  - [Sample 2](2_shell) lets you execute arbitrary shell commands on the server,
    and shows a minimal example of writing [your own server-side Python
-   feature](2_shell/svr/run.py) and the corresponding [Elm client
-   library](2_shell/elm/src/InsecureShell.elm).
+   feature](2_shell/svr/run.py) and the corresponding type-safe [Elm client
+   module](2_shell/elm/src/InsecureShell.elm).
  - [Sample 3](3_browser) provides a basic directory browser for exploring the
    server-side filesystem layout, showing a slightly more complex example of a
    [custom server-side Python feature](3_browser/svr/run.py) and corresponding
-   [Elm client library](3_browser/elm/src/ReadDir.elm).
+   type-safe [Elm client module](3_browser/elm/src/ReadDir.elm).
  - [Sample 4](4_router_simple) is a basic but full-featured application for
    interacting with IOS-XR routers. It shows how to use some more
    "production-oriented" features, such as multiple channels, server restarts,
@@ -107,7 +107,7 @@ can commit the assets into the repo without the filename changing every time).
 It isn't possible to just turn the hashing fully off (at the time of writing).
 
 
-# Testing local changes to the EnTrance library packages
+# Testing local changes to the published EnTrance packages
 
 The sample apps here just pull the production EnTrance packages as dependencies
 from the public package servers:
