@@ -33,11 +33,11 @@ with routers) but you can totally ignore these, and it is also easy to write
 any app-specific functionality.
 
 This is an early commit, and is a bit sparse on documentation. The
-[samples](https://github.com/ensoft/entrance/samples) directory has some simple
-example apps. A design document is in the
-[docs](https://github.com/ensoft/entrance/docs) directory; this explains
-concepts and terminology required to fully understand the APIs for both Elm and
-Python.
+[samples](https://github.com/ensoft/entrance/tree/master/samples) directory has
+some simple example apps. A design document is in the
+[docs](https://github.com/ensoft/entrance/tree/master/docs) directory; this
+explains concepts and terminology required to fully understand the APIs for
+both Elm and Python.
 
 The single repo has the source for three separate packages:
 

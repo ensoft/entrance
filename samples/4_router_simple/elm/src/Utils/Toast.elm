@@ -64,10 +64,8 @@ view toast =
         ]
 
 
-
--- @@@@
-
-
+{-| Toast encoder/decoders, so Toast values can be passed eg through ports
+-}
 encode : Toast -> Value
 encode toast =
     case toast of

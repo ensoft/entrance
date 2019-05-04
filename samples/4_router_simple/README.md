@@ -27,5 +27,5 @@ issue](https://github.com/highlightjs/highlight.js/issues/1245#issuecomment-2428
 This sample app still uses only a single "target" (ie talks to only a single
 router at a time, albeit over multiple connections). If your app requires
 simultaneous connectivity to more than one router, then look at the
-[Target](https://package.elm-lang.org/packages/ensoft/EnTrance/latest/EnTrance-Feature-Target)
+[Target](https://package.elm-lang.org/packages/ensoft/entrance/latest/EnTrance-Feature-Target)
 documentation.

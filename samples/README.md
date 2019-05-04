@@ -151,6 +151,7 @@ you don't have them (`elm install remotedata` will do the trick):
   - elm/bytes
   - elm/file
   - elm/http
+  - elm/parser
   - krisajenkins/remotedata
 
 ## Javascript
