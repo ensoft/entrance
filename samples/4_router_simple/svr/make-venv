@@ -1,9 +1,12 @@
 #
 # Construct a basic virtual environment for python + dependencies
 #
+# Note that this sets the environment variable required to bring in the
+# optional PyPi dependencies used only by the router interaction features
+#
 
 python3 -m venv venv
-venv/bin/pip3 install entrance
+ENTRANCE_ROUTER_FEATURES=1 venv/bin/pip3 install entrance
 
 echo
 echo To run, enter '"./run"'

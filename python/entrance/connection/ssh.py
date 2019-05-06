@@ -1,16 +1,30 @@
-# Sunshine CLI connection
-#
 # Maintain a persistent ssh connection to an individual router
 #
 # Copyright (c) 2018 Ensoft Ltd
 
-import os, re, socket,  time
-import paramiko
-import ncclient.manager as nc_mgr
-from ncclient.operations import RaiseMode
-from entrance.connection.base import ConnectionFactory, ConState
-from entrance.connection.cli import ThreadedCLIConnection
-from entrance.connection.netconf import ThreadedNCConnection
+import os, re, socket, sys, time
+try:
+    import paramiko
+    import ncclient.manager as nc_mgr
+    from ncclient.operations import RaiseMode
+    from entrance.connection.base import ConnectionFactory, ConState
+    from entrance.connection.cli import ThreadedCLIConnection
+    from entrance.connection.netconf import ThreadedNCConnection
+except ImportError:
+    # Very cheesy way to permit the majority case (router interaction
+    # features not required) to install the entrance package without
+    # incurring all the complex dependencies from the router features.
+    # Better solutions welcomed!
+    class Fail():
+        def __init__(self, *args, **kwargs):
+            print('\n\n\n\n* To use router features, re-install entrance',
+                  'with the ENTRANCE_ROUTER_FEATURES\n* environment variable',
+                  'set (to any value). This installation does not have',
+                  'the\n* required dependencies.\n\n\n', file=sys.stderr)
+            os.abort()
+    ThreadedCLIConnection = Fail
+    ThreadedNCConnection = Fail
+    ConnectionFactory = Fail
 
 __all__ = ['SSHConnectionFactory']
 

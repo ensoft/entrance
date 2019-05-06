@@ -1,13 +1,24 @@
+# Setup definition for EnTrance package
+
+import os
 from setuptools import find_packages, setup
 
 # Websockets v7 breaks sanic, so pin that dependency to prior release
 websockets_fix = 'websockets==6.0'
 
+# Router features require heavy dependencies, so include only when
+# actually required, by setting the ENTRANCE_ROUTER_FEATURES
+# environment variable
+if 'ENTRANCE_ROUTER_FEATURES' in os.environ:
+    router_deps = ['janus', 'ncclient', 'paramiko']
+else:
+    router_deps = []
+
 with open('README.md', 'r') as f:
     long_description = f.read()
 
 setup(name='entrance',
-      version='1.0.1',
+      version='1.1.2',
       author='Ensoft Ltd',
       description='Server framework for web apps',
       url='https://github.com/ensoft/entrance',
@@ -25,12 +36,6 @@ setup(name='entrance',
         'Programming Language :: Python :: 3.7'
       ],
 
-      install_requires=[
-        # Required for core functionality
-        'asyncio', 'pyyaml', 'sanic', websockets_fix,
-
-        # Required only for the built-in features for talking
-        # to routers - should probably split out somehow
-        'janus', 'ncclient','paramiko'
-      ]
+      install_requires=router_deps + \
+          ['asyncio', 'pyyaml', 'sanic', websockets_fix]
 )
