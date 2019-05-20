@@ -49,8 +49,10 @@ class WebsocketHandler():
         Mini-event loop that listens for incoming requests and handles them
         """
         while True:
+            got_req = False
             try:
                 req = await self.ws.recv()
+                got_req = True
             except asyncio.CancelledError:
                 log.info('Websocket closed')
                 for feature in self.features:
@@ -59,7 +61,8 @@ class WebsocketHandler():
             except Exception as e:
                 log.error('Websocket recv exception', e)
             try:
-                await self._handle_req(req)
+                if got_req:
+                    await self._handle_req(req)
             except Exception as e:
                 log.error('Exception during _handle_req: {} (see debug.log for details)'.format(e))
                 log.debug('_handle_req exception details', exc_info=True, stack_info=True)

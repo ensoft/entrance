@@ -18,7 +18,7 @@ with open('README.md', 'r') as f:
     long_description = f.read()
 
 setup(name='entrance',
-      version='1.1.2',
+      version='1.1.3',
       author='Ensoft Ltd',
       description='Server framework for web apps',
       url='https://github.com/ensoft/entrance',
