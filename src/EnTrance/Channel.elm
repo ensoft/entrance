@@ -35,8 +35,8 @@ thinking about that, you probably want multiple
 # How to use
 
 Looking at some of the sample apps, eg the [notes
-app](https://github.com/ensoft/entrance/samples/1_notes/elm/src/State.elm) may
-be a helpful supplement to the description here.
+app](https://github.com/ensoft/entrance/blob/master/samples/1_notes/elm/src/State.elm)
+may be a helpful supplement to the description here.
 
 
 ## Channels and ports
@@ -197,7 +197,7 @@ These "loop round", so a JSON message send out on `injectSend` is received on
 `injectRecv`. This can provide a handy way for complex apps to feed messages
 from sub-apps back to the top level in a clean way. (You can do it lots of
 other ways if you prefer.) For an example of how to use it, see the [example
-code](https://github.com/ensoft/entrance/samples/4_router_simple/elm/src/Utils/Inject.elm).
+code](https://github.com/ensoft/entrance/blob/master/samples/4_router_simple/elm/src/Utils/Inject.elm).
 
 @docs InjectSendPort
 @docs InjectRecvPort
