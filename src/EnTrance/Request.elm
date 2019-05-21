@@ -33,18 +33,17 @@ care about this unless you're writing a particular type of complex app, in
 which case you want to use [Target.set](EnTrance-Feature-Target#set) on most
 requests yourself.)
 
-In the typical case, you would finish with [sendRpcUsing](#sendRpcUsing):
-
-    port myAppSend : Json.Encode.Value -> Cmd msg
+In the typical case, you would finish with
+[Channel.sendSimpleRpc](EnTrance-Channel#sendSimpleRpc) or
+[Channel.sendRpc](EnTrance-Channel#sendRpc), eg:
 
     Request.new "order_ice_cream"
         |> Request.addString "flavour" "chocolate"
         |> Request.addBool "with_flake" True
-        |> Request.sendRpcUsing myAppSend
+        |> Channel.sendSimpleRpc model
 
-where `myAppSend` is the [channel](EnTrance-Channel) you're sending over. This
-invokes some extra magic, whereby the actual JSON going to the server would be
-something like:
+Sending invokes some extra magic, whereby the actual JSON going to the server
+would be something like:
 
     {
         "msg_type": "order_ice_cream",
@@ -54,9 +53,8 @@ something like:
         "id": <some auto-generated unique identifier>
     }
 
-so that the reply gets routed back to the `appRecv` channel (using the
-`"channel": "my_app"` field that was added for you), and any out-of-order or outdated
-replies get automatically dropped.
+so that the reply gets routed back to the sending channel, and any out-of-order
+or outdated replies get automatically dropped.
 
 If you add multiple values for the same key, then the most recent value wins. For example:
 
