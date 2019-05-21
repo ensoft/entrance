@@ -95,8 +95,8 @@ receive one of these when you used
 target or target group, and one of the underlying connections just changed
 state.
 
-  - `state`: the new overall connection state
-  - `child`: the name of the child whose state just changed
+  - `groupState`: the new overall connection state
+  - `childName`: the name of the child whose state just changed
   - `childState`: the new state of the changed child
   - `timestamp`: a "HH:MM:SS" string giving a timestamp
 
@@ -109,7 +109,7 @@ type alias GroupState =
     }
 
 
-{-| Decoder for [GroupState](#GroupState). Takes a message constructor.
+{-| JSON decoder for [GroupState](#GroupState). Takes a message constructor.
 -}
 decodeGroupState : (GroupState -> msg) -> Decoder msg
 decodeGroupState makeMsg =
@@ -123,7 +123,7 @@ decodeGroupState makeMsg =
         |> Decode.map makeMsg
 
 
-{-| Decoder for [connection state](#State).
+{-| JSON decoder for [connection state](#State).
 -}
 decodeState : Decoder State
 decodeState =
@@ -163,7 +163,7 @@ decodeState =
         |> Decode.andThen identity
 
 
-{-| Decoder for [connection params](#Params).
+{-| JSON decoder for [connection params](#Params).
 -}
 decodeParams : Decoder Params
 decodeParams =
@@ -184,7 +184,7 @@ decodeParams =
         (Decode.field "netconf_port" Decode.string)
 
 
-{-| Encoder for [Params](#Params). This can be handy for, eg, persisting
+{-| JSON encoder for [Params](#Params). This can be handy for, eg, persisting
 connection settings.
 -}
 encodeParams : Params -> Encode.Value

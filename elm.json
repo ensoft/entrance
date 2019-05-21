@@ -3,7 +3,7 @@
     "name": "ensoft/entrance",
     "summary": "Framework for Elm apps using a Python 3.5+ asyncio backend",
     "license": "MIT",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "exposed-modules": [
         "EnTrance.Channel",
         "EnTrance.Request",
