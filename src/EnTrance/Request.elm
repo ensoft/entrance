@@ -102,8 +102,9 @@ import Json.Encode as Encode
 
 
 {-| A request value, that can be built up client-side, before eventually being
-sent over a channel to the server (typically using `send` from
-`EnTrance.Endpoint`).
+sent over a channel to the server (typically using
+[Channel.sendSimpleRpc](EnTrance-Channel#sendSimpleRpc) or
+[Channel.sendRpc](EnTrance-Channel#sendRpc)).
 -}
 type Request
     = Request (Dict String Encode.Value)
