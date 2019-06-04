@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 #
 # Build all the frontend assets to run in production mode.
 #
@@ -39,13 +39,7 @@ chmod 444 $S/*
 #
 
 # elm-analyse
-if which elm-analyse > /dev/null
-then
-  echo "Running elm-analyse..."
-  elm-analyse | grep -v "^INFO: "
-else
-  echo "If you haven't got elm-analyse, run 'yarn global add elm-analyse'"
-fi
+yarn exec elm-analyse | grep -v "^INFO: "
 
 # grep for @@@
 find src ../svr -name \*.elm -o -name \*.js -o -name \*.py | xargs grep @@@

@@ -6,7 +6,7 @@
 #
 
 python3 -m venv venv
-ENTRANCE_ROUTER_FEATURES=1 venv/bin/pip3 install entrance
+ENTRANCE_ROUTER_FEATURES=1 venv/bin/pip3 install wheel entrance
 
 echo
 echo To run, enter '"./run"'

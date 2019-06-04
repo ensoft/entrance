@@ -3,7 +3,7 @@
 # Construct a basic virtual environment for the Python server
 
 python3 -m venv venv
-venv/bin/pip3 install --upgrade entrance
+venv/bin/pip3 install --upgrade wheel entrance
 
 echo
 echo To run, enter "./run"
