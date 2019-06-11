@@ -159,6 +159,7 @@ function retry_connection () {
     init_ws();
     setTimeout(() => {
         if (ws.readyState != 1) {
+            ws.close();
             retry_connection();
         }
     }, 2000);
