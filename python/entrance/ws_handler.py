@@ -53,13 +53,13 @@ class WebsocketHandler():
             try:
                 req = await self.ws.recv()
                 got_req = True
-            except asyncio.CancelledError:
+            except (asyncio.CancelledError, ConnectionClosed):
                 log.info('Websocket closed')
                 for feature in self.features:
                     feature.close()
                 break
             except Exception as e:
-                log.error('Websocket recv exception', e)
+                log.error('Websocket recv exception: %s', e)
             try:
                 if got_req:
                     await self._handle_req(req)
