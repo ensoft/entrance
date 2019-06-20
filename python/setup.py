@@ -1,4 +1,13 @@
 # Setup definition for EnTrance package
+#
+# To upload a new version to PyPi using nix:
+#
+# - `nix-shell -p 'python3.withPackages(p:[p.pip p.setuptools p.twine])'`
+# - `python3 setup.py sdist`
+# - If that all looks ok, `twine upload dist/*`
+#
+# I suspect there's something else that should be happening with wheel, but
+# this seems to work.
 
 import os
 from setuptools import find_packages, setup
@@ -18,7 +27,7 @@ with open('README.md', 'r') as f:
     long_description = f.read()
 
 setup(name='entrance',
-      version='1.1.3',
+      version='1.1.4',
       author='Ensoft Ltd',
       description='Server framework for web apps',
       url='https://github.com/ensoft/entrance',
