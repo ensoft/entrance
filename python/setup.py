@@ -9,11 +9,18 @@
 # I suspect there's something else that should be happening with wheel, but
 # this seems to work.
 
-import os
+import os, sys
 from setuptools import find_packages, setup
 
 # Websockets v7 breaks sanic, so pin that dependency to prior release
-websockets_fix = 'websockets==6.0'
+websockets_fix = 'websockets>=6.0,<7.0'
+
+# Sanic used to support Python 3.5+, but has recently moved on to 3.6+, with
+# a long-term support release of 18.12 for 3.5
+v = sys.version_info
+assert v.major == 3
+assert v.minor >= 5
+sanic_fix = 'sanic==18.12.0' if v.minor == 5 else 'sanic'
 
 # Router features require heavy dependencies, so include only when
 # actually required, by setting the ENTRANCE_ROUTER_FEATURES
@@ -46,5 +53,5 @@ setup(name='entrance',
       ],
 
       install_requires=router_deps + \
-          ['asyncio', 'pyyaml', 'sanic', websockets_fix]
+          ['asyncio', 'pyyaml', sanic_fix, websockets_fix]
 )
