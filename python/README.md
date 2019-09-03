@@ -17,5 +17,4 @@ and [sample
 By default, the dependencies for this package cover the core functionality.
 There is also a rich set of optional capability for interacting with routers,
 that has a much more extended set of PyPi dependencies. If you want to use
-this, then set the `ENTRANCE_ROUTER_FEATURES` environment variable (to any
-value) when installing or upgrading.
+this, then depend on `entrance[with-router-features]` rather than just `entrance`.

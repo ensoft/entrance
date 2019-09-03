@@ -17,10 +17,10 @@ except ImportError:
     # Better solutions welcomed!
     class Fail():
         def __init__(self, *args, **kwargs):
-            print('\n\n\n\n* To use router features, re-install entrance',
-                  'with the ENTRANCE_ROUTER_FEATURES\n* environment variable',
-                  'set (to any value). This installation does not have',
-                  'the\n* required dependencies.\n\n\n', file=sys.stderr)
+            print('\n\n\n\n* To use router features, re-install depending',
+                  'on the package\n* name "entrance[with-router-features]",',
+                  'not simply "entrance".\n* This installation does not',
+                  'have the required dependencies.\n\n\n', file=sys.stderr)
             os.abort()
     ThreadedCLIConnection = Fail
     ThreadedNCConnection = Fail
