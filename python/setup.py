@@ -20,21 +20,20 @@ router_feature_deps = ['janus', 'ncclient', 'paramiko']
 # to rewrite this from '[]' to 'router_feature_deps'. I'm looking at you, nix...
 extra_deps = []
 
-# Sanic currently requires websockets 7.x
-websockets_fix = 'websockets>=7.0,<8.0'
-
-# Sanic used to support Python 3.5+, but has recently moved on to 3.6+, with
-# a long-term support release of 18.12 for 3.5
+# The very latest version of sanic (19.6.3 onwards) require websockets 7.x, but before
+# that requires 6.x. Also, sanic dropped support for Python 3.5, leaving a long-term
+# support version at 18.12. So stick to the older websockets for now, and pin sanic.
 v = sys.version_info
 assert v.major == 3
 assert v.minor >= 5
-sanic_fix = 'sanic==18.12.0' if v.minor == 5 else 'sanic'
+sanic_fix = 'sanic==18.12.0' if v.minor == 5 else 'sanic==19.6.2'
+websockets_fix = 'websockets>=6.0,<7.0'
 
 with open('README.md', 'r') as f:
     long_description = f.read()
 
 setup(name='entrance',
-      version='1.1.6',
+      version='1.1.7',
       author='Ensoft Ltd',
       description='Server framework for web apps',
       url='https://github.com/ensoft/entrance',
