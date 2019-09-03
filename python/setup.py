@@ -26,14 +26,14 @@ extra_deps = []
 v = sys.version_info
 assert v.major == 3
 assert v.minor >= 5
-sanic_fix = 'sanic==18.12.0' if v.minor == 5 else 'sanic==19.6.2'
+sanic_fix = 'sanic==18.12.0' if v.minor == 5 else 'sanic<=19.6.2'
 websockets_fix = 'websockets>=6.0,<7.0'
 
 with open('README.md', 'r') as f:
     long_description = f.read()
 
 setup(name='entrance',
-      version='1.1.7',
+      version='1.1.8',
       author='Ensoft Ltd',
       description='Server framework for web apps',
       url='https://github.com/ensoft/entrance',
