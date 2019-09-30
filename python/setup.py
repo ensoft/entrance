@@ -20,26 +20,17 @@ router_feature_deps = ['janus', 'ncclient', 'paramiko']
 # to rewrite this from '[]' to 'router_feature_deps'. I'm looking at you, nix...
 extra_deps = []
 
-# The very latest version of sanic (19.6.3 onwards) require websockets 7.x, but before
-# that requires 6.x. Also, sanic dropped support for Python 3.5, leaving a long-term
-# support version at 18.12. So support either the oldest or newest supported package set.
+# Sanic dropped support for Python 3.5, leaving a long-term support version at 18.12.
 v = sys.version_info
 assert v.major == 3
 assert v.minor >= 5
-if v.minor == 5:
-    # Ye Olde Python 3.5
-    sanic = 'sanic==18.12.0'
-    websockets = 'websockets>=6.0,<7.0'
-else:
-    # Python 3.6+
-    sanic = 'sanic>=19.6.3'
-    websockets = 'websockets>=7.0,<8.0'
+sanic = 'sanic==18.12.0' if v.minor == 5 else 'sanic'
 
 with open('README.md', 'r') as f:
     long_description = f.read()
 
 setup(name='entrance',
-      version='1.1.9',
+      version='1.1.10',
       author='Ensoft Ltd',
       description='Server framework for web apps',
       url='https://github.com/ensoft/entrance',
@@ -57,7 +48,7 @@ setup(name='entrance',
         'Programming Language :: Python :: 3.7'
       ],
 
-      install_requires=['pyyaml', sanic, websockets] + extra_deps,
+      install_requires=['pyyaml', sanic] + extra_deps,
 
       extras_require={
         'with-router-features': router_feature_deps
