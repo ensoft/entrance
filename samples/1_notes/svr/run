@@ -1,2 +1,2 @@
 #!/bin/sh
-venv/bin/python3 -m entrance || echo "Have you run ./make-venv first?"
+venv/bin/python3 -m entrance $* || echo "Have you run ./make-venv first?"
