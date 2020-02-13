@@ -13,3 +13,5 @@ prefs.json
 .cache/
 run.spec
 package-lock.json
+__pycache__/
+.gcroots/
