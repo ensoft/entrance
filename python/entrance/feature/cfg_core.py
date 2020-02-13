@@ -79,10 +79,10 @@ class CoreFeature(ConfiguredFeature):
         except KeyError:
             # probably some race condition
             log.debug(
-                "Ignoring missing started feature {} on stop_feature request".format(
-                    feature_key
-                )
+                "Ignoring missing started feature %s on stop_feature request",
+                feature_key,
             )
+
         if isinstance(feature, TargetFeature):
             # Might as well try a disconnect
             log.debug("About to disconnect stopped feature " + feature_key)

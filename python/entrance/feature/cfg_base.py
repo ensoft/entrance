@@ -26,10 +26,11 @@ class ConfiguredFeature(Feature):
                 self.config[key] = val
             else:
                 log.critical(
-                    '\n!!\n!!\n!! Invalid config item "{}" for feature {}\n'
-                    "!! Possible items are: {}\n!!\n!!\n!!".format(
-                        key, self.name, sorted(self.config.keys())
-                    )
+                    '\n!!\n!!\n!! Invalid config item "%s" for feature %s\n'
+                    "!! Possible items are: %s\n!!\n!!\n!!",
+                    key,
+                    self.name,
+                    sorted(self.config.keys()),
                 )
                 sys.exit(1)
 

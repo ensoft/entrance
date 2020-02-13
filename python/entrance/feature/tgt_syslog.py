@@ -2,7 +2,7 @@
 #
 # Copyright (c) 2018 Ensoft Ltd
 
-import asyncio, re, time
+import re, time
 
 from .._util import events
 from .tgt_base import TargetFeature
@@ -39,7 +39,7 @@ class SyslogFeature(TargetFeature):
         filters = self.original_req.get("filters", [])
         if len(filters) == 0:
             # just drop empty lines
-            filters = ["\S"]
+            filters = [r"\S"]
         regexp = re.compile("|".join(["({})".format(f) for f in filters]))
         nfn = {"nfn_type": "syslog", "channel": self.original_req["channel"]}
         if "id" in self.original_req:

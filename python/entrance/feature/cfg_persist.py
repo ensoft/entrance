@@ -2,8 +2,8 @@
 #
 # Copyright (c) 2018 Ensoft Ltd
 
-import ujson
 from collections import defaultdict
+import ujson
 from .cfg_base import ConfiguredFeature
 
 # Remember which active websockets have requested data for a given channel, so

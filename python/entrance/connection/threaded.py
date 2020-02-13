@@ -3,7 +3,7 @@
 #
 # Copyright (c) 2018 Ensoft Ltd
 
-import logging, re, threading, traceback
+import logging, re, threading
 import asyncio, janus
 
 from .base import Connection, ConState
@@ -160,7 +160,7 @@ class ThreadedConnection(Connection):
                 failure_reason = "Handler for {}({}) crashed: {}".format(
                     action, args, e
                 )
-                log.warning(failure_reason + " (see debug.log for details)")
+                log.warning("%s (see debug.log for details)", failure_reason)
                 log.debug("Exception details", exc_info=True, stack_info=True)
                 self._update_state(
                     ConState.RECONNECTING_AFTER_FAILURE, failure_reason=failure_reason
@@ -171,4 +171,4 @@ class ThreadedConnection(Connection):
             # Return the result
             self.result_q.sync_q.put((result, fut))
 
-        log.debug("{} thread main exit".format(self.name))
+        log.debug("%s thread main exit", self.name)

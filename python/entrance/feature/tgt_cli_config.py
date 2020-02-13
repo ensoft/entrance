@@ -2,7 +2,6 @@
 #
 # Copyright (c) 2018 Ensoft Ltd
 
-import re
 from .tgt_base import TargetFeature
 
 

@@ -19,8 +19,8 @@ def start(config, task):
     """
     start_cfg = config["start"]
     log.info(
-        "Starting app with "
-        + ", ".join(["{}={}".format(k, v) for k, v in start_cfg.items()])
+        "Starting app with %s",
+        ", ".join(["{}={}".format(k, v) for k, v in start_cfg.items()]),
     )
     app = sanic.Sanic(log_config=None)
     app.config.RESPONSE_TIMEOUT = 3600

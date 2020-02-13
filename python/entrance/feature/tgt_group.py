@@ -2,8 +2,6 @@
 #
 # Copyright (c) 2018 Ensoft Ltd
 
-import asyncio, time
-
 from .._util import events
 from .tgt_base import TargetFeature
 

@@ -3,7 +3,6 @@
 # Copyright (c) 2018 Ensoft Ltd
 
 import logging, sys
-from entrance.connection.base import ConState
 
 log = logging.getLogger(__name__)
 
@@ -116,8 +115,10 @@ class Feature:
         """
         if nfn_type not in self.notifications:
             log.critical(
-                "\n!!\n!!\n!! Feature {} trying to send disallowed "
-                "notification {}\n!!\n!!".format(self.name, nfn_type)
+                "\n!!\n!!\n!! Feature %s trying to send disallowed "
+                "notification %s\n!!\n!!",
+                self.name,
+                nfn_type,
             )
             sys.exit(1)
 

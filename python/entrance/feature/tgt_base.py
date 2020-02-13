@@ -2,7 +2,7 @@
 #
 # Copyright (c) 2018 Ensoft Ltd
 
-import asyncio, logging, time
+import logging, time
 
 from ..connection import connection_factory_by_name, ConState, Connection
 from .._util import events
@@ -72,9 +72,7 @@ class TargetFeature(DynamicFeature):
         # originally
         if not self.connect_requested:
             log.info(
-                "{} disconnecting, although we didn't connect originally".format(
-                    self.name
-                )
+                "%s disconnecting, although we didn't connect originally", self.name
             )
         self.connect_requested = False
         # Actually do it

@@ -3,7 +3,7 @@
 # Copyright (c) 2018 Ensoft Ltd
 
 from collections import defaultdict
-import asyncio, logging, re, traceback
+import asyncio, logging
 import ujson
 from websockets.exceptions import ConnectionClosed
 from .connection import ConState
@@ -42,10 +42,10 @@ class WebsocketHandler:
         for feature_cls in ConfiguredFeature.all():
             name = feature_cls.name
             if name in feature_config:
-                log.debug("Adding configured feature " + name)
+                log.debug("Adding configured feature %s", name)
                 self.add_feature(feature_cls(self, feature_config[name]))
             else:
-                log.debug("Skipping unconfigured feature " + name)
+                log.debug("Skipping unconfigured feature %s", name)
 
     async def handle_incoming_requests(self):
         """
@@ -68,9 +68,7 @@ class WebsocketHandler:
                     await self._handle_req(req)
             except Exception as e:
                 log.error(
-                    "Exception during _handle_req: {} (see debug.log for details)".format(
-                        e
-                    )
+                    "Exception during _handle_req: %s (see debug.log for details)", e
                 )
                 log.debug(
                     "_handle_req exception details", exc_info=True, stack_info=True
@@ -87,7 +85,7 @@ class WebsocketHandler:
         channel = request["channel"]
         target = request.get("target", "")
         if req_type != "ping":
-            log.debug("WS RECV: {}".format(abbreviate(request)))
+            log.debug("WS RECV: %s", abbreviate(request))
 
         # Dispatch the request
         try:

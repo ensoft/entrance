@@ -2,7 +2,6 @@
 #
 # Copyright (c) 2018 Ensoft Ltd
 
-import asyncio
 import logging
 from enum import IntEnum, unique
 
@@ -107,7 +106,7 @@ class Connection:
         for listener in self.state_listeners:
             await listener(self)
         self._log.debug(
-            "changed state from {} to {}; notified {} listeners",
+            "changed state from %s to %s; notified %d listeners",
             old_state.name,
             state.name,
             len(self.state_listeners),

@@ -2,7 +2,7 @@
 #
 # Copyright (c) 2018 Ensoft Ltd
 
-import os, re, socket, sys, time
+import os, socket, sys, time
 
 try:
     import paramiko
