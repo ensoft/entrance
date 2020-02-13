@@ -7,14 +7,16 @@ import asyncio, time
 from .._util import events
 from .tgt_base import TargetFeature
 
+
 class TargetGroupFeature(TargetFeature):
     """
     Feature that manages a set (or subtree) of target features
     """
+
     #
     # Schema
     #
-    name = 'target_group'
+    name = "target_group"
 
     #
     # Implementation
@@ -24,7 +26,7 @@ class TargetGroupFeature(TargetFeature):
         Initialize ourselves for the specified target
         """
         super().__init__(ws_handler, channel, target, original_request)
-        self.parent_target = original_request.get('parent_target', None)
+        self.parent_target = original_request.get("parent_target", None)
 
         # If there are target features for our member target that have
         # already been started, associate them with us now. Any ones created

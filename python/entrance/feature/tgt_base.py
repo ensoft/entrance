@@ -10,19 +10,20 @@ from .dyn_base import DynamicFeature
 
 log = logging.getLogger(__name__)
 
+
 class TargetFeature(DynamicFeature):
     """
     A feature that has one or more connections to a target (eg a router). Always
     optional, because we don't want connection initiation unless needed by the
     application.
     """
+
     #
     # Schema
     #
-    requests = {'connect': ['connection_type', 'params'],
-                'disconnect': []}
+    requests = {"connect": ["connection_type", "params"], "disconnect": []}
 
-    notifications = ['connection_state']
+    notifications = ["connection_state"]
 
     #
     # Implementation
@@ -39,13 +40,13 @@ class TargetFeature(DynamicFeature):
 
         # If the client has requested connection state updates, then set up
         # the common part of each notification message now
-        if original_request.get('con_state_subscribe', False):
+        if original_request.get("con_state_subscribe", False):
             self.state_subscription_nfn = {
-                'nfn_type': 'connection_state',
-                'feature': self.name
+                "nfn_type": "connection_state",
+                "feature": self.name,
             }
-            if 'id' in original_request:
-                self.state_subscription_nfn['id'] = original_request['id']
+            if "id" in original_request:
+                self.state_subscription_nfn["id"] = original_request["id"]
         else:
             self.state_subscription_nfn = None
 
@@ -54,10 +55,10 @@ class TargetFeature(DynamicFeature):
         Create a connection factory and start connecting
         """
         self.connect_requested = True
-        if params.get('auth_is_password', True):
-            params['password'] = params['secret']
+        if params.get("auth_is_password", True):
+            params["password"] = params["secret"]
         else:
-            params['ssh_key'] = params['secret']
+            params["ssh_key"] = params["secret"]
         conn_factory_cls = connection_factory_by_name[connection_type]
         self.conn_factory = conn_factory_cls(**params)
         # Actually do it
@@ -70,8 +71,11 @@ class TargetFeature(DynamicFeature):
         # We shouldn't be asked to disconnect if it wasn't us who connected
         # originally
         if not self.connect_requested:
-            log.info("{} disconnecting, although we didn't connect originally"
-                     .format(self.name))
+            log.info(
+                "{} disconnecting, although we didn't connect originally".format(
+                    self.name
+                )
+            )
         self.connect_requested = False
         # Actually do it
         await self.disconnect()
@@ -118,18 +122,20 @@ class TargetFeature(DynamicFeature):
 
         # Send the notification if we were asked to
         if self.state_subscription_nfn is not None:
+
             def encode_state(state):
                 return {
-                    'state': state.name,
-                    'error': state.failure_reason if state.is_failure() else ''
+                    "state": state.name,
+                    "error": state.failure_reason if state.is_failure() else "",
                 }
+
             nfn = self.state_subscription_nfn.copy()
-            nfn['child'] = child.name
-            nfn['child_state'] = encode_state(child.state)
-            nfn['feature'] = self.name
-            nfn['state'] = encode_state(self.state)
-            nfn['state_is_up'] = self.state == ConState.CONNECTED
-            nfn['timestamp'] = time.strftime('%H:%M:%S')
+            nfn["child"] = child.name
+            nfn["child_state"] = encode_state(child.state)
+            nfn["feature"] = self.name
+            nfn["state"] = encode_state(self.state)
+            nfn["state_is_up"] = self.state == ConState.CONNECTED
+            nfn["timestamp"] = time.strftime("%H:%M:%S")
             await self._notify(**nfn)
 
         # Independently notify our target manager, if there is one

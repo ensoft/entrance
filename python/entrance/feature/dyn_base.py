@@ -4,11 +4,13 @@
 
 from .base import Feature
 
+
 class DynamicFeature(Feature):
     """
     A feature that is started only when the client requests it, and thus can
     be instantiated more than once per channel (with distinct target values)
     """
+
     def __init__(self, ws_handler, channel, target, original_request):
         """
         Remember our channel, target, and original request (which contains
@@ -26,8 +28,8 @@ class DynamicFeature(Feature):
         """
         Insert the target and channel into any outgoing notifications
         """
-        nfn['channel'] = self.channel
-        nfn['target'] = self.target
+        nfn["channel"] = self.channel
+        nfn["target"] = self.target
         await super()._notify(**nfn)
 
     @classmethod
@@ -36,6 +38,7 @@ class DynamicFeature(Feature):
         Look up a concrete subclass by "name" field
         """
         return _find(cls, name)
+
 
 def _find(cls, name):
     """

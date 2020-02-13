@@ -9,26 +9,27 @@ from .tgt_base import TargetFeature
 
 log = logging.getLogger(__name__)
 
+
 class CoreFeature(ConfiguredFeature):
     """
     Feature to manage core services
     """
+
     #
     # Schema
     #
-    name = 'core'
+    name = "core"
 
-    requests = {'force_restart': [],
-                'ping': [],
-                'start_feature': ['feature', 'channel', 'target', '__req__'],
-                'stop_feature': ['feature', 'channel', 'target']}
-
-    notifications = ['pong']
-
-    config = {
-        'allow_restart_requests': False,
-        'allowed_dynamic_features': None
+    requests = {
+        "force_restart": [],
+        "ping": [],
+        "start_feature": ["feature", "channel", "target", "__req__"],
+        "stop_feature": ["feature", "channel", "target"],
     }
+
+    notifications = ["pong"]
+
+    config = {"allow_restart_requests": False, "allowed_dynamic_features": None}
 
     #
     # Implementation
@@ -41,25 +42,26 @@ class CoreFeature(ConfiguredFeature):
         """
         Forcibly restart the server (assuming started by the "run" script)
         """
-        if self.config['allow_restart_requests']:
+        if self.config["allow_restart_requests"]:
             os._exit(42)
         else:
-            return self._rpc_failure('Restart disallowed by configuration')
+            return self._rpc_failure("Restart disallowed by configuration")
 
     async def do_ping(self):
         """
         Respond to a keepalive message from the client
         """
-        return self._result('pong')
+        return self._result("pong")
 
     async def do_start_feature(self, feature_name, channel, target, req):
         """
         Start an optional feature
         """
-        allowed = self.config['allowed_dynamic_features']
+        allowed = self.config["allowed_dynamic_features"]
         if allowed is not None and feature_name not in allowed:
             return self._rpc_failure(
-                'Feature {} is disallowed by configuration'.format(feature_name))
+                "Feature {} is disallowed by configuration".format(feature_name)
+            )
         feature_cls = DynamicFeature.find(feature_name)
         new_feature = feature_cls(self.ws_handler, channel, target, req)
         self.ws_handler.add_feature(new_feature, channel, target)
@@ -76,12 +78,17 @@ class CoreFeature(ConfiguredFeature):
             del self.started_features[feature_key]
         except KeyError:
             # probably some race condition
-            log.debug('Ignoring missing started feature {} on stop_feature request'.format(feature_key))
+            log.debug(
+                "Ignoring missing started feature {} on stop_feature request".format(
+                    feature_key
+                )
+            )
         if isinstance(feature, TargetFeature):
             # Might as well try a disconnect
-            log.debug('About to disconnect stopped feature ' + feature_key)
+            log.debug("About to disconnect stopped feature " + feature_key)
             await feature.disconnect()
+
 
 def _fk(feature_name, channel, target):
     """Construct a dict key for a feature instance"""
-    return '{}::{}::{}'.format(feature_name, channel, target)
+    return "{}::{}::{}".format(feature_name, channel, target)

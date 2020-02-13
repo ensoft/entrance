@@ -4,15 +4,17 @@
 
 from .tgt_base import TargetFeature
 
+
 class CLIExecFeature(TargetFeature):
     """
     Feature that submits CLI exec requests directly
     """
+
     #
     # Schema
     #
-    name = 'cli_exec'
-    requests = {'cli_exec': ['command']}
+    name = "cli_exec"
+    requests = {"cli_exec": ["command"]}
 
     #
     # Implementation
@@ -22,14 +24,15 @@ class CLIExecFeature(TargetFeature):
         Connect and get ready for future cli_exec requests
         """
         self.connection = await conn_factory.get_cli_connection(
-                                                    'cli_exec', self.finalizer)
+            "cli_exec", self.finalizer
+        )
         self.add_connection(self.connection, from_scratch=True)
 
     async def finalizer(self):
         """
         Finalize a new connection
         """
-        await self.connection.send('run stty rows 0\n', override=True)
+        await self.connection.send("run stty rows 0\n", override=True)
         await self.connection.expect_prompt(override=True)
 
     async def do_cli_exec(self, command):

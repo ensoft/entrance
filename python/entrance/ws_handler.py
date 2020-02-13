@@ -17,14 +17,17 @@ log = logging.getLogger(__name__)
 Feature.normalize_schema()
 
 # Turn multiple args into a single flat key for dict lookups
-def _mktuple(*args): return '||'.join(args)
+def _mktuple(*args):
+    return "||".join(args)
 
-class WebsocketHandler():
+
+class WebsocketHandler:
     """
     Class that holds a set of Feature modules, and handles the mux/demux so
     that they all share a single websocket in a sensible fashion. One of these
     objects is instantiated for each client session.
     """
+
     def __init__(self, ws, feature_config):
         self.ws = ws
         self.conn_factory = None
@@ -39,10 +42,10 @@ class WebsocketHandler():
         for feature_cls in ConfiguredFeature.all():
             name = feature_cls.name
             if name in feature_config:
-                log.debug('Adding configured feature ' + name)
+                log.debug("Adding configured feature " + name)
                 self.add_feature(feature_cls(self, feature_config[name]))
             else:
-                log.debug('Skipping unconfigured feature ' + name)
+                log.debug("Skipping unconfigured feature " + name)
 
     async def handle_incoming_requests(self):
         """
@@ -54,18 +57,24 @@ class WebsocketHandler():
                 req = await self.ws.recv()
                 got_req = True
             except (asyncio.CancelledError, ConnectionClosed):
-                log.info('Websocket closed')
+                log.info("Websocket closed")
                 for feature in self.features:
                     feature.close()
                 break
             except Exception as e:
-                log.error('Websocket recv exception: %s', e)
+                log.error("Websocket recv exception: %s", e)
             try:
                 if got_req:
                     await self._handle_req(req)
             except Exception as e:
-                log.error('Exception during _handle_req: {} (see debug.log for details)'.format(e))
-                log.debug('_handle_req exception details', exc_info=True, stack_info=True)
+                log.error(
+                    "Exception during _handle_req: {} (see debug.log for details)".format(
+                        e
+                    )
+                )
+                log.debug(
+                    "_handle_req exception details", exc_info=True, stack_info=True
+                )
                 await self.notify_error(str(e))
 
     async def _handle_req(self, raw_request):
@@ -73,12 +82,12 @@ class WebsocketHandler():
         Handle an incoming request by dispatching to the appropriate Feature
         """
         request = ujson.loads(raw_request)
-        request['userid'] = 'default' # no auth features yet
-        req_type = request['req_type']
-        channel = request['channel']
-        target = request.get('target', '')
-        if req_type != 'ping':
-            log.debug('WS RECV: {}'.format(abbreviate(request)))
+        request["userid"] = "default"  # no auth features yet
+        req_type = request["req_type"]
+        channel = request["channel"]
+        target = request.get("target", "")
+        if req_type != "ping":
+            log.debug("WS RECV: {}".format(abbreviate(request)))
 
         # Dispatch the request
         try:
@@ -97,19 +106,23 @@ class WebsocketHandler():
                 feature = self.request_map_optional[key]
                 events.create_checked_task(feature.handle(request))
             except KeyError:
-                log.warning('Un-handleable request {}'.format(request))
-                log.debug('key = {}, request_map_optional = {}'.format(
-                            key, self.request_map_optional))
-                await self.notify_error("Don't know how to handle request {}".
-                                        format(request))
+                log.warning("Un-handleable request {}".format(request))
+                log.debug(
+                    "key = {}, request_map_optional = {}".format(
+                        key, self.request_map_optional
+                    )
+                )
+                await self.notify_error(
+                    "Don't know how to handle request {}".format(request)
+                )
                 return
 
     async def notify(self, **nfn):
         """
         Send a specific outbound notification
         """
-        if nfn['nfn_type'] != 'pong':
-            log.debug('WS SEND: {}'.format(abbreviate(nfn)))
+        if nfn["nfn_type"] != "pong":
+            log.debug("WS SEND: {}".format(abbreviate(nfn)))
         json = ujson.dumps(nfn)
         await self.ws.send(json)
 
@@ -117,7 +130,7 @@ class WebsocketHandler():
         """
         Send an outbound error, caught by the frontend's app top level
         """
-        await self.notify(channel='error', nfn_type='error', value=error, **nfn)
+        await self.notify(channel="error", nfn_type="error", value=error, **nfn)
 
     def add_feature(self, feature, channel=None, target=None):
         """
@@ -138,7 +151,7 @@ class WebsocketHandler():
                 self.request_map_optional[key] = feature
 
             if isinstance(feature, TargetGroupFeature):
-            # Remember target groups
+                # Remember target groups
                 self.target_group[feature.target] = feature
 
             # All target features need their own collection
@@ -174,16 +187,15 @@ class WebsocketHandler():
             if parent_target_group is not None:
                 # First consider the dying feature to be disconnected, so the
                 # parent feature recomputes its overall state
-                saved_state = feature.state     # bit of a hack
+                saved_state = feature.state  # bit of a hack
                 feature.state = ConState.DISCONNECTED
                 await parent_target_group.state_listener(feature)
-                feature.state = saved_state      # at least hack over now
+                feature.state = saved_state  # at least hack over now
 
                 # Then actually make your parents forget you, Hermione
                 parent_target_group.remove_feature(feature)
             if feature.parent_target is not None:
                 self.target_features[feature.parent_target].remove(feature)
-
 
     def get_features_for_target(self, target):
         """
@@ -193,6 +205,8 @@ class WebsocketHandler():
 
 
 MAX_LENGTH = 200
+
+
 def abbreviate(msg):
     """
     Helper function to make logging safer and saner
@@ -200,8 +214,8 @@ def abbreviate(msg):
     val = msg.copy()
     if isinstance(val, dict):
         for k, v in val.items():
-            if k == 'secret' and isinstance(v, str):
-                val[k] = '*' * len(v)
+            if k == "secret" and isinstance(v, str):
+                val[k] = "*" * len(v)
             elif isinstance(v, str) and len(v) > MAX_LENGTH:
                 val[k] = v[0:MAX_LENGTH] + "..."
             elif isinstance(v, dict):

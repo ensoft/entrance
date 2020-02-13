@@ -23,16 +23,20 @@ class ConState(IntEnum):
     FAILED_TO_CONNECT = 7
 
     def is_failure(self):
-        return self in (self.FAILURE_WHILE_DISCONNECTING,
-                        self.RECONNECTING_AFTER_FAILURE,
-                        self.FAILED_TO_CONNECT)
+        return self in (
+            self.FAILURE_WHILE_DISCONNECTING,
+            self.RECONNECTING_AFTER_FAILURE,
+            self.FAILED_TO_CONNECT,
+        )
 
-class ConnectionFactory():
+
+class ConnectionFactory:
     """
     Factory that knows about a single router, and can produce Connection
     objects on demand. Each Connection object represents a connection to that
     same router, that can be used for different purposes concurrently.
     """
+
     def __init__(self, **kwargs):
         self.kwargs = kwargs
 
@@ -54,7 +58,8 @@ class ConnectionFactory():
         await con.connect(**self.kwargs)
         return con
 
-class Connection():
+
+class Connection:
     """
     Base class representing a single router connection
     """
@@ -74,7 +79,8 @@ class Connection():
         self.kwargs = kwargs
         self.state_listeners = []
         self._log = logging.getLogger(
-            "{}.{}-{}".format(__name__, type(self).__name__, name))
+            "{}.{}-{}".format(__name__, type(self).__name__, name)
+        )
 
     def add_state_listener(self, listener):
         """
@@ -100,15 +106,21 @@ class Connection():
         self.state = state
         for listener in self.state_listeners:
             await listener(self)
-        self._log.debug("changed state from {} to {}; notified {} listeners",
-                        old_state.name, state.name, len(self.state_listeners))
+        self._log.debug(
+            "changed state from {} to {}; notified {} listeners",
+            old_state.name,
+            state.name,
+            len(self.state_listeners),
+        )
 
         # Call the finalizer if required
         if state == ConState.FINALIZING:
+
             async def finalize():
                 self._log.debug("started finalizing")
                 if self.finalizer is not None:
                     await self.finalizer()
                 await self._set_state(ConState.CONNECTED)
                 self._log.debug("finished finalizing")
+
             events.create_checked_task(finalize())
