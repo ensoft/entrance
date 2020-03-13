@@ -4,6 +4,7 @@
 
 from entrance.connection.threaded import ThreadedConnection
 
+
 class ThreadedNCConnection(ThreadedConnection):
     """
     Base class for a ThreadedConnection whose worker thread
@@ -14,39 +15,39 @@ class ThreadedNCConnection(ThreadedConnection):
         """
         Issue a Netconf "get" request in the worker thread
         """
-        return await self._request('get', override, xml_filter)
+        return await self._request("get", override, xml_filter)
 
     async def get_config(self, xml_filter, override=False):
         """
         Issue a Netconf "get-config" request in the worker thread
         """
-        if xml_filter.strip() == '':
+        if xml_filter.strip() == "":
             xml_filter = None
-        return await self._request('get_config', override, xml_filter)
+        return await self._request("get_config", override, xml_filter)
 
     async def edit_config(self, xml_config, override=False):
         """
         Issue a Netconf "edit-config" request in the worker thread
         """
-        return await self._request('edit_config', override, xml_config)
+        return await self._request("edit_config", override, xml_config)
 
     async def commit(self, override=False):
         """
         Issue a Netconf "commit" request in the worker thread
         """
-        return await self._request('commit', override)
+        return await self._request("commit", override)
 
     async def validate(self, override=False):
         """
         Issue a Netconf "validate" request in the worker thread
         """
-        return await self._request('validate', override)
+        return await self._request("validate", override)
 
     async def discard_changes(self, override=False):
         """
         Issue a discard-changes request in the worker thread
         """
-        return await self._request('discard_changes', override)
+        return await self._request("discard_changes", override)
 
     def _handle_get(self, xml_filter):
         """
@@ -58,14 +59,14 @@ class ThreadedNCConnection(ThreadedConnection):
         """
         Netconf "get-config" request
         """
-        return self.mgr.get_config(source='running', filter=xml_filter)
+        return self.mgr.get_config(source="running", filter=xml_filter)
 
     def _handle_edit_config(self, xml_config):
         """
         Netconf "edit-config" request
         """
         self._handle_discard_changes()
-        return self.mgr.edit_config(target='candidate', config=xml_config)
+        return self.mgr.edit_config(target="candidate", config=xml_config)
 
     def _handle_commit(self):
         """
@@ -77,7 +78,7 @@ class ThreadedNCConnection(ThreadedConnection):
         """
         Netconf "validate" request
         """
-        return self.mgr.validate(source='candidate')
+        return self.mgr.validate(source="candidate")
 
     def _handle_discard_changes(self):
         """

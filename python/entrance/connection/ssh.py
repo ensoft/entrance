@@ -2,7 +2,8 @@
 #
 # Copyright (c) 2018 Ensoft Ltd
 
-import os, re, socket, sys, time
+import os, socket, sys, time
+
 try:
     import paramiko
     import ncclient.manager as nc_mgr
@@ -15,46 +16,55 @@ except ImportError:
     # features not required) to install the entrance package without
     # incurring all the complex dependencies from the router features.
     # Better solutions welcomed!
-    class Fail():
+    class Fail:
         def __init__(self, *args, **kwargs):
-            print('\n\n\n\n* To use router features, re-install depending',
-                  'on the package\n* name "entrance[with-router-features]",',
-                  'not simply "entrance".\n* This installation does not',
-                  'have the required dependencies.\n\n\n', file=sys.stderr)
+            print(
+                "\n\n\n\n* To use router features, re-install depending",
+                'on the package\n* name "entrance[with-router-features]",',
+                'not simply "entrance".\n* This installation does not',
+                "have the required dependencies.\n\n\n",
+                file=sys.stderr,
+            )
             os.abort()
+
     ThreadedCLIConnection = Fail
     ThreadedNCConnection = Fail
     ConnectionFactory = Fail
 
-__all__ = ['SSHConnectionFactory']
+__all__ = ["SSHConnectionFactory"]
 
-BUF_SIZE = 10000 # ssh max buffer size
+BUF_SIZE = 10000  # ssh max buffer size
+
 
 class SSHCLIConnection(ThreadedCLIConnection):
     """
     SSH CLI Connection
     """
+
     def _handle_connect(self, **creds):
         """
         Initiate a persistent ssh connection, in the paramiko thread.
         """
         self.ssh = paramiko.SSHClient()
         self.ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        kwargs = {'username': creds['username'],
-                  'port': int(creds.get('ssh_port', '22')),
-                  'allow_agent': False, 'look_for_keys': False}
-        if 'ssh_key' in creds:
-            kwargs['key_filename'] = creds['ssh_key']
+        kwargs = {
+            "username": creds["username"],
+            "port": int(creds.get("ssh_port", "22")),
+            "allow_agent": False,
+            "look_for_keys": False,
+        }
+        if "ssh_key" in creds:
+            kwargs["key_filename"] = creds["ssh_key"]
         else:
-            kwargs['password'] = creds.get('password', '')
-        self.ssh.connect(creds['host'], **kwargs)
+            kwargs["password"] = creds.get("password", "")
+        self.ssh.connect(creds["host"], **kwargs)
         self.channel = self.ssh.invoke_shell(width=0, height=0)
 
         # Swallow any initial stuff
-        self.channel.send('\n')
+        self.channel.send("\n")
         while True:
             z = self.channel.recv(BUF_SIZE).decode()
-            if '#' in z:
+            if "#" in z:
                 break
             time.sleep(1)
 
@@ -99,23 +109,27 @@ class SSHCLIConnection(ThreadedCLIConnection):
         except socket.timeout:
             return bytes()
 
+
 class SSHNCConnection(ThreadedNCConnection):
     """
     SSH Netconf Connection
     """
+
     def _handle_connect(self, **creds):
         """
         Initiate a persistent ssh connection, in the worker thread
         """
-        kwargs = {'username': creds['username'],
-                  'port': creds.get('netconf_port', 830),
-                  'device_params': {'name':'iosxr'}}
-        if 'ssh_key' in creds:
-            kwargs['key_filename'] = creds['ssh_key']
+        kwargs = {
+            "username": creds["username"],
+            "port": creds.get("netconf_port", 830),
+            "device_params": {"name": "iosxr"},
+        }
+        if "ssh_key" in creds:
+            kwargs["key_filename"] = creds["ssh_key"]
         else:
-            kwargs['password'] = creds.get('password', '')
+            kwargs["password"] = creds.get("password", "")
         try:
-            self.mgr = nc_mgr.connect_ssh(creds['host'], **kwargs)
+            self.mgr = nc_mgr.connect_ssh(creds["host"], **kwargs)
             self.mgr.raise_mode = RaiseMode.NONE
             self._update_state(ConState.FINALIZING)
         except Exception as e:
@@ -134,9 +148,11 @@ class SSHNCConnection(ThreadedNCConnection):
             self._update_state(ConState.FAILURE_WHILE_DISCONNECTING, str(e))
         self.terminate = True
 
+
 class SSHConnectionFactory(ConnectionFactory):
     """
     ConnectionFactory for a regular router
     """
+
     cli_connection_cls = SSHCLIConnection
     netconf_connection_cls = SSHNCConnection

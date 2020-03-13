@@ -17,6 +17,7 @@ from entrance.feature.cfg_base import ConfiguredFeature
 # your own features. All logs below are gratuitous.
 log = logging.getLogger(__name__)
 
+
 class InsecureShellFeature(ConfiguredFeature):
     """
     Feature that runs a shell command with zero security
@@ -24,11 +25,11 @@ class InsecureShellFeature(ConfiguredFeature):
 
     # Feature name, started in config.yml (or by name by the client if it were
     # a dynamic feature instead)
-    name = 'insecure_shell'
+    name = "insecure_shell"
 
     # Message schema: accept one request, named 'insecure_shell_cmd', with one
     # argument, of name 'cmd', and send an RPC reply.
-    requests = {'insecure_shell_cmd': ['cmd']}
+    requests = {"insecure_shell_cmd": ["cmd"]}
 
     # do_thing is called whenever a request of name 'thing' is received. So
     # this is the implementation of the 'insecure_shell_cmd' request. This
@@ -36,18 +37,21 @@ class InsecureShellFeature(ConfiguredFeature):
     #  - self._rpc_success(value)
     #  - self._rpc_failure(err_string).
     async def do_insecure_shell_cmd(self, cmd):
-        log.debug('Received insecure_shell_cmd[{}]'.format(cmd))
+        log.debug("Received insecure_shell_cmd[{}]".format(cmd))
 
         try:
             proc = await asyncio.create_subprocess_shell(cmd, stdout=PIPE, stderr=PIPE)
             stdout, stderr = await proc.communicate()
             return self._rpc_success(
-                dict(stdout=stdout, stderr=stderr, exit_code=proc.returncode))
+                dict(stdout=stdout, stderr=stderr, exit_code=proc.returncode)
+            )
 
         except Exception as e:
             log.warning("create_subprocess_shell failure: {}".format(e))
             return self._rpc_failure(str(e))
 
+
 # Start up
 from entrance.__main__ import main
+
 main(*sys.argv[1:])
