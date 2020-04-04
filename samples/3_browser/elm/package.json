@@ -17,7 +17,7 @@
     "sass": "^1.18.0"
   },
   "scripts": {
-    "dev": "parcel src/index.html",
+    "dev": "parcel src/index.html --hmr-port 41234",
     "build": "parcel build src/index.html --no-content-hash --public-url ./"
   }
 }
