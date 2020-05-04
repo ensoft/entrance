@@ -22,7 +22,7 @@ def start(config, task):
         "Starting app with %s",
         ", ".join(["{}={}".format(k, v) for k, v in start_cfg.items()]),
     )
-    app = sanic.Sanic(log_config=None)
+    app = sanic.Sanic(name="entrance-app", log_config=None)
     app.config.RESPONSE_TIMEOUT = 3600
     app.config.KEEP_ALIVE_TIMEOUT = 75
 
