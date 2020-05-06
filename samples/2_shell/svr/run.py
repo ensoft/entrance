@@ -8,8 +8,10 @@
 # Since this is a configured feature, you need your config.yaml file
 # to include it, otherwise your feature won't be started.
 
-import asyncio, logging, sys
+import asyncio, logging
 from asyncio.subprocess import PIPE
+
+import entrance
 from entrance.feature.cfg_base import ConfiguredFeature
 
 # For production use, this wouldn't require any additional logging.
@@ -52,6 +54,4 @@ class InsecureShellFeature(ConfiguredFeature):
 
 
 # Start up
-from entrance.__main__ import main
-
-main(*sys.argv[1:])
+entrance.main()

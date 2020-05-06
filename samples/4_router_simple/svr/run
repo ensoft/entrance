@@ -5,14 +5,14 @@
 import os, shutil, sys
 from multiprocessing import Process, freeze_support
 
+import entrance
 
-def run(*args):
+
+def run():
     """
     Run one instance of the server in a separate process
     """
-    from entrance.__main__ import main
-
-    main(*args)
+    entrance.main()
 
 
 if __name__ == "__main__":
@@ -31,7 +31,7 @@ if __name__ == "__main__":
     # Spawn a server, and spawn a new one if requested by the client
     # (indicated by exit code 42)
     while True:
-        p = Process(target=run, args=sys.argv[1:])
+        p = Process(target=run)
         p.start()
         try:
             p.join()
