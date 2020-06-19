@@ -27,15 +27,15 @@ assert v.minor >= 5
 sanic = "sanic==18.12.0" if v.minor == 5 else "sanic"
 
 # ujson is an indirect dependency (via sanic) and version 2.x has a C part that doesn't
-# compile, so specify the latest 1.x release here.
-ujson_workaround = "ujson==1.35"
+# compile, but 3.x fixes this.
+ujson = "ujson >= 3"
 
 with open("README.md", "r") as f:
     long_description = f.read()
 
 setup(
     name="entrance",
-    version="1.1.12",
+    version="1.1.13",
     author="Ensoft Ltd",
     description="Server framework for web apps",
     url="https://github.com/ensoft/entrance",
@@ -49,7 +49,8 @@ setup(
         "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
     ],
-    install_requires=["pyyaml", sanic, ujson_workaround] + extra_deps,
+    install_requires=["pyyaml", sanic, ujson] + extra_deps,
     extras_require={"with-router-features": router_feature_deps},
 )
