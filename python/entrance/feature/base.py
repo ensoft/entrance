@@ -90,7 +90,9 @@ class Feature:
         try:
             result = await getattr(self, "do_" + req_type)(*args)
         except Exception as e:
-            msg = "Exception handling {}({})".format(req_type, ", ".join(args))
+            msg = "Exception handling {}({})".format(
+                req_type, ", ".join(str(arg) for arg in args)
+            )
             log.error(msg + " (see debug.log for details)")
             log.debug("Exception details", exc_info=True, stack_info=True)
             result = self._rpc_failure(msg)
