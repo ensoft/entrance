@@ -34,6 +34,11 @@ def start(config, task):
         await ws_handler.handle_incoming_requests()
 
     # Static file handling
+    #
+    # Note:
+    # The order of 'app.static()' and route declarations (with '@app.route()')
+    # matters here. For static to be a fallback it should come after route
+    # declarations, e.g. if a route path contains a parameter.
     static_dir = location + start_cfg["static_dir"]
     app.static("/", static_dir)
 
