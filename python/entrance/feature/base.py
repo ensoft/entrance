@@ -2,7 +2,8 @@
 #
 # Copyright (c) 2018 Ensoft Ltd
 
-import logging, sys
+import logging
+
 from ..exceptions import EntranceError
 
 log = logging.getLogger(__name__)

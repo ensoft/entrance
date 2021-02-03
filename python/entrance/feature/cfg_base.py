@@ -2,7 +2,8 @@
 #
 # Copyright (c) 2018 Ensoft Ltd
 
-import logging, sys
+import logging
+
 from .base import Feature
 from ..exceptions import EntranceError
 
