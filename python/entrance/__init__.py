@@ -1,6 +1,7 @@
 import runpy
 
 from entrance.connection import *
+from entrance.exceptions import *
 from entrance.feature import *
 from entrance.ws_handler import *
 

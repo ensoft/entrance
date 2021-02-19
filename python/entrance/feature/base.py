@@ -2,7 +2,9 @@
 #
 # Copyright (c) 2018 Ensoft Ltd
 
-import logging, sys
+import logging
+
+from ..exceptions import EntranceError
 
 log = logging.getLogger(__name__)
 
@@ -116,13 +118,10 @@ class Feature:
         Check that we're conforming to our own schema declaration
         """
         if nfn_type not in self.notifications:
-            log.critical(
-                "\n!!\n!!\n!! Feature %s trying to send disallowed "
-                "notification %s\n!!\n!!",
-                self.name,
-                nfn_type,
-            )
-            sys.exit(1)
+            msg = "Feature {} trying to send disallowed notification {}".format(
+                self.name, nfn_type)
+            log.critical("\n!!\n!!\n!! %s\n!!\n!!", msg)
+            raise EntranceError(msg)
 
     async def _notify(self, **nfn):
         """
