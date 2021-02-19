@@ -27,8 +27,8 @@ assert v.minor >= 5
 sanic = "sanic==18.12.0" if v.minor == 5 else "sanic"
 
 # ujson is an indirect dependency (via sanic) and version 2.x has a C part that doesn't
-# compile, but 3.x fixes this.
-ujson = "ujson >= 3"
+# compile.
+ujson = "ujson!=2.*"
 
 with open("README.md", "r") as f:
     long_description = f.read()
