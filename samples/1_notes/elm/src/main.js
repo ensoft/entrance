@@ -8,7 +8,8 @@ const ws_url = `${ws_proto}//${location.hostname}${url_port}${location.pathname}
 
 // Initialise the Elm app
 import { Elm } from './Main.elm';
-const app = Elm.Main.init({node: document.querySelector('main')});
+const running_from_static = true; // change for the static variant
+const app = Elm.Main.init({ node: document.querySelector('main'), flags: running_from_static });
 
 // Do the websocket stuff
 import { handleWebsocket } from 'entrance-ws';

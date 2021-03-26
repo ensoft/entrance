@@ -6,10 +6,11 @@ port module State exposing
 
 import EnTrance.Channel as Channel
 import EnTrance.Feature.Persist as Persist
+import Http exposing (expectJson)
 import Json.Decode as Decode exposing (Decoder)
 import Json.Encode as Encode
 import RemoteData exposing (RemoteData(..))
-import Response exposing (pure)
+import Response exposing (pure, withCmd)
 import Types exposing (Model, Msg(..))
 
 
@@ -39,24 +40,50 @@ port errorRecv : Channel.ErrorRecvPort msg
 -- INITIAL STATE
 
 
-initialModel : Model
-initialModel =
-    { editText = ""
+initialModel : Bool -> ( Model, Cmd Msg )
+initialModel runningFromStatic =
+    let
+        cmd =
+            if runningFromStatic then
+                Http.get
+                    { url = "/data.json"
+                    , expect = expectJson (RemoteData.fromResult >> StaticData) decodeStaticData
+                    }
+
+            else
+                Cmd.none
+
+        decodeStaticData =
+            Decode.list Decode.string
+    in
+    { runningFromStatic = runningFromStatic
+    , editText = ""
     , notes = []
     , errors = []
     , result = NotAsked
+    , staticData =
+        if runningFromStatic then
+            Loading
+
+        else
+            NotAsked
     , connected = False
     , sendPort = appSend
     }
+        |> withCmd cmd
 
 
-subscriptions : Sub Msg
-subscriptions =
-    Sub.batch
-        [ errorRecv Error
-        , appIsUp ChannelIsUp
-        , Channel.sub appRecv Error notifications
-        ]
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    if model.runningFromStatic then
+        Sub.none
+
+    else
+        Sub.batch
+            [ errorRecv Error
+            , appIsUp ChannelIsUp
+            , Channel.sub appRecv Error notifications
+            ]
 
 
 {-| The notifications we want to decode
@@ -121,3 +148,6 @@ update msg model =
 
         Error error ->
             pure { model | errors = error :: model.errors }
+
+        StaticData staticData ->
+            pure { model | staticData = staticData }
