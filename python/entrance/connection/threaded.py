@@ -3,7 +3,7 @@
 #
 # Copyright (c) 2018 Ensoft Ltd
 
-import logging, re, threading, traceback
+import logging, re, threading
 import asyncio, janus
 
 from .base import Connection, ConState
@@ -11,8 +11,10 @@ from .._util import events
 
 log = logging.getLogger(__name__)
 
+
 class ConnectionError(Exception):
     pass
+
 
 class ThreadedConnection(Connection):
     """
@@ -35,9 +37,9 @@ class ThreadedConnection(Connection):
         """
         Initiate a connection
         """
-        self.thread = threading.Thread(name=self.__class__, daemon=True,
-                                       target=self._thread_main,
-                                       kwargs=kwargs)
+        self.thread = threading.Thread(
+            name=self.__class__, daemon=True, target=self._thread_main, kwargs=kwargs
+        )
         self.thread.start()
         self.event_loop_task = events.create_checked_task(self._event_loop())
 
@@ -51,9 +53,9 @@ class ThreadedConnection(Connection):
         # Give the thread a few seconds, then try to mop things up
         await asyncio.sleep(5)
         if self.state != ConState.DISCONNECTED:
-            log.info('Cancelling {} task for slow disconnection'.format(self.name))
+            log.info("Cancelling {} task for slow disconnection".format(self.name))
             state = ConState.FAILURE_WHILE_DISCONNECTING
-            state.failure_reason = 'Disconnect timeout'
+            state.failure_reason = "Disconnect timeout"
             await self._set_state(state)
         self.event_loop_task.cancel()
         self.event_loop_task = None
@@ -71,9 +73,13 @@ class ThreadedConnection(Connection):
                 else:
                     fut.set_result(result)
             except Exception as e:
-                log.error('Exception during connection/threaded/_event_loop: {}'
-                          ' (see debug.log for details)'.format(e))
-                log.debug('_event_loop exception details', exc_info=True, stack_info=True)
+                log.error(
+                    "Exception during connection/threaded/_event_loop: {}"
+                    " (see debug.log for details)".format(e)
+                )
+                log.debug(
+                    "_event_loop exception details", exc_info=True, stack_info=True
+                )
 
     async def _request(self, action, override, *args):
         """
@@ -89,8 +95,11 @@ class ThreadedConnection(Connection):
         # it's set for a purpose that might cause an exception, you're going
         # to get an exception.
         if self.state != ConState.CONNECTED and not override:
-            raise ConnectionError('Connection {} in state {} so cannot {}({})'.format(
-                                self.name, self.state.name, action, args))
+            raise ConnectionError(
+                "Connection {} in state {} so cannot {}({})".format(
+                    self.name, self.state.name, action, args
+                )
+            )
         fut = asyncio.Future()
         await self.request_q.async_q.put((action, args, fut))
         await asyncio.wait([fut], return_when=asyncio.ALL_COMPLETED)
@@ -120,21 +129,26 @@ class ThreadedConnection(Connection):
                     self._handle_connect(**kwargs)
                 except Exception as reason:
                     err = str(reason)
-                    log.error('Exception in _handle_connect: ' + err + ' (see debug.log for details)')
-                    log.debug('Exception details', exc_info=True, stack_info=True)
-                    m = re.search('<.*>: *(.+)', err)
+                    log.error(
+                        "Exception in _handle_connect: "
+                        + err
+                        + " (see debug.log for details)"
+                    )
+                    log.debug("Exception details", exc_info=True, stack_info=True)
+                    m = re.search("<.*>: *(.+)", err)
                     failure_reason = m.group(1) if m else err
-                    self._update_state(ConState.FAILED_TO_CONNECT,
-                                       failure_reason=failure_reason)
+                    self._update_state(
+                        ConState.FAILED_TO_CONNECT, failure_reason=failure_reason
+                    )
                 initiate_connect = False
 
             # Block for a request
             action, args, fut = self.request_q.sync_q.get()
-            if not (action == 'recv' and len(args) == 1 and args[0] == 0):
-                log.debug('{} worker thread req: {}{}'.format(self.name, action, args))
+            if not (action == "recv" and len(args) == 1 and args[0] == 0):
+                log.debug("{} worker thread req: {}{}".format(self.name, action, args))
 
             # Do the request
-            handler = getattr(self, '_handle_' + action)
+            handler = getattr(self, "_handle_" + action)
             try:
                 result = handler(*args)
             except Exception as e:
@@ -144,15 +158,17 @@ class ThreadedConnection(Connection):
                 # and carry on - probably more correct once we have confidence
                 # that things generally do the right thing.
                 failure_reason = "Handler for {}({}) crashed: {}".format(
-                                                            action, args, e)
-                log.warning(failure_reason + ' (see debug.log for details)')
-                log.debug('Exception details', exc_info=True, stack_info=True)
-                self._update_state(ConState.RECONNECTING_AFTER_FAILURE,
-                                   failure_reason=failure_reason)
+                    action, args, e
+                )
+                log.warning("%s (see debug.log for details)", failure_reason)
+                log.debug("Exception details", exc_info=True, stack_info=True)
+                self._update_state(
+                    ConState.RECONNECTING_AFTER_FAILURE, failure_reason=failure_reason
+                )
                 initiate_connect = True
                 result = e
 
             # Return the result
             self.result_q.sync_q.put((result, fut))
 
-        log.debug('{} thread main exit'.format(self.name))
+        log.debug("%s thread main exit", self.name)

@@ -2,15 +2,19 @@
 #
 # Copyright (c) 2018 Ensoft Ltd
 
-import logging, sys
+import logging
+
 from .base import Feature
+from ..exceptions import EntranceError
 
 log = logging.getLogger(__name__)
+
 
 class ConfiguredFeature(Feature):
     """
     A feature that is started by configuration, once per websocket
     """
+
     # Dictionary of configuration options and default values
     config = {}
 
@@ -23,10 +27,15 @@ class ConfiguredFeature(Feature):
             if key in self.config:
                 self.config[key] = val
             else:
-                log.critical('\n!!\n!!\n!! Invalid config item "{}" for feature {}\n'
-                          '!! Possible items are: {}\n!!\n!!\n!!'.format(
-                              key, self.name, sorted(self.config.keys())))
-                sys.exit(1)
+                msg_parts = [
+                    'Invalid config item "{}" for feature {}'.format(key, self.name),
+                    'Possible items are: {}'.format(sorted(self.config.keys())),
+                ]
+                log.critical(
+                    "\n!!\n!!\n!! %s\n!!\n!!\n!!",
+                    "\n!! ".join(msg_parts)
+                )
+                raise EntranceError(". ".join(msg_parts))
 
     @classmethod
     def all(cls):

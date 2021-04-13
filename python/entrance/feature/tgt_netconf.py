@@ -4,23 +4,27 @@
 
 from .tgt_base import TargetFeature
 
+
 class NetconfFeature(TargetFeature):
     """
     Feature that exposes Netconf operations
     """
+
     #
     # Schema
     #
-    name = 'netconf'
-    requests = {'netconf': ['op', '__req__']}
+    name = "netconf"
+    requests = {"netconf": ["op", "__req__"]}
 
     # We decode out the actual netconf op as follows
-    op_requests = {'get': ['value'],
-                   'get_config': ['value'],
-                   'edit_config': ['value'],
-                   'commit': [],
-                   'validate': [],
-                   'discard_changes': []}
+    op_requests = {
+        "get": ["value"],
+        "get_config": ["value"],
+        "edit_config": ["value"],
+        "commit": [],
+        "validate": [],
+        "discard_changes": [],
+    }
 
     #
     # Implementation
@@ -29,7 +33,7 @@ class NetconfFeature(TargetFeature):
         """
         Connect and get ready for the next commit request
         """
-        self.connection = await conn_factory.get_netconf_connection('netconf')
+        self.connection = await conn_factory.get_netconf_connection("netconf")
         self.add_connection(self.connection, from_scratch=True)
 
     async def do_netconf(self, op, req):
@@ -47,9 +51,12 @@ class NetconfFeature(TargetFeature):
             # If a validate operation returns errors, but they all have
             # severity 'warning' not 'error', then consider the operation
             # a success
-            if op == 'validate' and not rpc_reply.ok and \
-               not '<error-severity>error</error-severity>' in result:
-               return self._rpc_success(result)
+            if (
+                op == "validate"
+                and not rpc_reply.ok
+                and not "<error-severity>error</error-severity>" in result
+            ):
+                return self._rpc_success(result)
 
             # Usual processing
             elif rpc_reply.ok:

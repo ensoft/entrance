@@ -4,9 +4,7 @@
 
 """Logging helpers and utils."""
 
-__all__ = (
-    "FormattedLogRecord"
-)
+__all__ = ("FormattedLogRecord",)
 
 
 import logging
@@ -20,6 +18,7 @@ class FormattedLogRecord(logging.LogRecord):
     default log record type in the `logging` package.
 
     """
+
     def getMessage(self):
         """Return the message for this record."""
         msg = str(self.msg)
@@ -44,6 +43,5 @@ class FormattedLogRecord(logging.LogRecord):
         # Now truncate the message, if necessary
         truncation = getattr(self, "truncation", None)
         if truncation is not None and len(msg) > truncation:
-            msg = "".join((msg[:truncation - 3], "..."))
+            msg = "".join((msg[: truncation - 3], "..."))
         return msg
-

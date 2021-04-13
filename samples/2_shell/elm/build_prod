@@ -39,7 +39,7 @@ chmod 444 $S/*
 #
 
 # elm-analyse
-yarn exec elm-analyse | grep -v "^INFO: "
+yarn run elm-analyse 2>&1 | grep -Eiv "^(error|info)[: ]"
 
 # grep for @@@
 find src ../svr -name \*.elm -o -name \*.js -o -name \*.py | xargs grep @@@

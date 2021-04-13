@@ -1,0 +1,8 @@
+#! /usr/bin/env nix-shell
+#! nix-shell -i bash -p python3Packages.entrance
+
+# This is an alternative to `make-venv` that is faster and much
+# more efficient in disk space, if you have nix installed:
+# https://nixos.org/nix/download.html (linux/macOS only)
+
+exec python3 ./run.py "$@"
