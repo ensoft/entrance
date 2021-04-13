@@ -57,15 +57,16 @@ class WebsocketHandler:
                 req = await self.ws.recv()
                 got_req = True
             except (asyncio.CancelledError, ConnectionClosed):
-                log.info("Websocket closed")
-                for feature in self.features:
-                    feature.close()
+                self._handle_websocket_closed()
                 break
             except Exception as e:
                 log.error("Websocket recv exception: %s", e)
             try:
                 if got_req:
                     await self._handle_req(req)
+            except (asyncio.CancelledError, ConnectionClosed):
+                self._handle_websocket_closed()
+                break
             except Exception as e:
                 log.error(
                     "Exception during _handle_req: %s (see debug.log for details)", e
@@ -201,6 +202,13 @@ class WebsocketHandler:
         """
         return self.target_features[target]
 
+    def _handle_websocket_closed(self):
+        """
+        Perform cleanup when a websocket is closed.
+        """
+        log.info("Websocket closed")
+        for feature in self.features:
+            feature.close()
 
 MAX_LENGTH = 200
 
