@@ -35,7 +35,7 @@ with open("README.md", "r") as f:
 
 setup(
     name="entrance",
-    version="1.1.15",
+    version="1.1.16",
     author="Ensoft Ltd",
     description="Server framework for web apps",
     url="https://github.com/ensoft/entrance",
