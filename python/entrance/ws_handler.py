@@ -47,16 +47,21 @@ class WebsocketHandler:
             else:
                 log.debug("Skipping unconfigured feature %s", name)
 
-    async def handle_incoming_requests(self):
+    async def handle_incoming_requests(self, timeout=None):
         """
         Mini-event loop that listens for incoming requests and handles them
         """
         while True:
             got_req = False
             try:
-                req = await self.ws.recv()
+                req = await asyncio.wait_for(self.ws.recv(), timeout)
                 got_req = True
             except (asyncio.CancelledError, ConnectionClosed):
+                self._handle_websocket_closed()
+                break
+            except asyncio.TimeoutError:
+                log.info("Timeout of %ds exceeded while waiting for incoming "
+                         "requests", timeout)
                 self._handle_websocket_closed()
                 break
             except Exception as e:
