@@ -49,7 +49,10 @@ class WebsocketHandler:
 
     async def handle_incoming_requests(self, timeout=None):
         """
-        Mini-event loop that listens for incoming requests and handles them
+        Mini-event loop that listens for incoming requests and handles them.
+
+        A timeout in seconds can optionally be supplied. If this timeout is
+        elapsed while waiting for a request, all features are closed.
         """
         while True:
             got_req = False
