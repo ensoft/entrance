@@ -133,8 +133,16 @@ function init_ws() {
         // console.log('Websocket closed', reason);
         if (ws_up) {
             set_ws_state(false);
-            console.log('Reconnecting to websocket');
-            retry_connection();
+            // In Firefox (but not Chrome or Safari), the websocket close event
+            // can arrive so quickly that, for example, a browser refresh causes
+            // two websocket connection requests (one as a dying gasp from the
+            // old code, then another from the new code). This seems to happen
+            // within a window of 10ms or so. So for Firefox's benefit, wait for
+            // 100ms before reconnecting.
+            setTimeout(() => {
+                console.log('Reconnecting to websocket');
+                retry_connection();
+            }, 100);
         }
     };
 
