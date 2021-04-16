@@ -76,9 +76,9 @@ export function handleWebsocket(url, app) {
 // fooBarBazSend -> foo_bar_baz
 function camel_to_snake(name) {
     return name.slice(0, -4)
-               .split(/(?=[A-Z])/)
-               .join('_')
-               .toLowerCase();
+        .split(/(?=[A-Z])/)
+        .join('_')
+        .toLowerCase();
 }
 
 //
@@ -114,8 +114,8 @@ function init_ws() {
                     } else {
                         // Fail! Just log to console
                         console.log(`Dropping message for channel ${channel} since ` +
-                                    `wanted sequence numer ${wanted} but found ${data.id}`,
-                                    data);
+                            `wanted sequence numer ${wanted} but found ${data.id}`,
+                            data);
                     }
                 } else {
                     // No sequence number processing required
@@ -154,7 +154,7 @@ function set_ws_state(state) {
 // Try to connect to the server.
 // Exponential backoff shouldn't be a win for the EnTrance
 // use cases, so simply always try reconnecting after two seconds.
-function retry_connection () {
+function retry_connection() {
     ws = new WebSocket(ws_url);
     init_ws();
     setTimeout(() => {
