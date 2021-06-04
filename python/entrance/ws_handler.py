@@ -54,8 +54,18 @@ class WebsocketHandler:
         while True:
             got_req = False
             try:
-                req = await self.ws.recv()
+                # If client is inactive for 10 minutes, send a ping to verify
+                # connectivity
+                req = await asyncio.wait_for(self.ws.recv(), timeout=10*60)
                 got_req = True
+            except asyncio.TimeoutError:
+                try:
+                    # Allow 10 seconds for pong
+                    await asyncio.wait_for(await self.ws.ping(), timeout=10)
+                except asyncio.TimeoutError:
+                    log.error("No pong - websocket seems inactive")
+                    self._handle_websocket_closed()
+                    break
             except (asyncio.CancelledError, ConnectionClosed):
                 self._handle_websocket_closed()
                 break
