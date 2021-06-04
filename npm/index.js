@@ -76,9 +76,9 @@ export function handleWebsocket(url, app) {
 // fooBarBazSend -> foo_bar_baz
 function camel_to_snake(name) {
     return name.slice(0, -4)
-               .split(/(?=[A-Z])/)
-               .join('_')
-               .toLowerCase();
+        .split(/(?=[A-Z])/)
+        .join('_')
+        .toLowerCase();
 }
 
 //
@@ -114,8 +114,8 @@ function init_ws() {
                     } else {
                         // Fail! Just log to console
                         console.log(`Dropping message for channel ${channel} since ` +
-                                    `wanted sequence numer ${wanted} but found ${data.id}`,
-                                    data);
+                            `wanted sequence numer ${wanted} but found ${data.id}`,
+                            data);
                     }
                 } else {
                     // No sequence number processing required
@@ -133,8 +133,16 @@ function init_ws() {
         // console.log('Websocket closed', reason);
         if (ws_up) {
             set_ws_state(false);
-            console.log('Reconnecting to websocket');
-            retry_connection();
+            // In Firefox (but not Chrome or Safari), the websocket close event
+            // can arrive so quickly that, for example, a browser refresh causes
+            // two websocket connection requests (one as a dying gasp from the
+            // old code, then another from the new code). This seems to happen
+            // within a window of 10ms or so. So for Firefox's benefit, wait for
+            // 100ms before reconnecting.
+            setTimeout(() => {
+                console.log('Reconnecting to websocket');
+                retry_connection();
+            }, 100);
         }
     };
 
@@ -154,7 +162,7 @@ function set_ws_state(state) {
 // Try to connect to the server.
 // Exponential backoff shouldn't be a win for the EnTrance
 // use cases, so simply always try reconnecting after two seconds.
-function retry_connection () {
+function retry_connection() {
     ws = new WebSocket(ws_url);
     init_ws();
     setTimeout(() => {
