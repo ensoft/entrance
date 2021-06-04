@@ -49,14 +49,14 @@ class WebsocketHandler:
 
     async def handle_incoming_requests(self):
         """
-        Mini-event loop that listens for incoming requests and handles them.
+        Mini-event loop that listens for incoming requests and handles them
         """
         while True:
             got_req = False
             try:
-                # If client is inactive for 15 minutes, send a ping to verify
+                # If client is inactive for 10 minutes, send a ping to verify
                 # connectivity
-                req = await asyncio.wait_for(self.ws.recv(), timeout=15*60)
+                req = await asyncio.wait_for(self.ws.recv(), timeout=10*60)
                 got_req = True
             except asyncio.TimeoutError:
                 try:
