@@ -45,7 +45,11 @@ class InsecureShellFeature(ConfiguredFeature):
             proc = await asyncio.create_subprocess_shell(cmd, stdout=PIPE, stderr=PIPE)
             stdout, stderr = await proc.communicate()
             return self._rpc_success(
-                dict(stdout=stdout, stderr=stderr, exit_code=proc.returncode)
+                dict(
+                    stdout=stdout.decode("utf-8"),
+                    stderr=stderr.decode("utf-8"),
+                    exit_code=proc.returncode,
+                )
             )
 
         except Exception as e:
