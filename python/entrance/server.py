@@ -26,6 +26,7 @@ def create_app(config, file_location) -> sanic.Sanic:
     app = sanic.Sanic(name="entrance-app", log_config=None)
     app.config.RESPONSE_TIMEOUT = 3600
     app.config.KEEP_ALIVE_TIMEOUT = 75
+    app.config.MOTD = False
 
     # Websocket handling
     @app.websocket("/ws")
