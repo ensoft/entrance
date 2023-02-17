@@ -21,10 +21,11 @@ router_feature_deps = ["janus", "ncclient", "paramiko"]
 extra_deps = []
 
 # Sanic dropped support for Python 3.5, leaving a long-term support version at 18.12.
+# Otherwise, we need the new app loader introduced in 22.9.0.
 v = sys.version_info
 assert v.major == 3
 assert v.minor >= 5
-sanic = "sanic==18.12.0" if v.minor == 5 else "sanic"
+sanic = "sanic==18.12.0" if v.minor == 5 else "sanic>=22.9.0"
 
 # ujson is an indirect dependency (via sanic) and version 2.x has a C part that doesn't
 # compile.
@@ -35,7 +36,7 @@ with open("README.md", "r") as f:
 
 setup(
     name="entrance",
-    version="1.1.17",
+    version="1.1.18",
     author="Ensoft Ltd",
     description="Server framework for web apps",
     url="https://github.com/ensoft/entrance",
