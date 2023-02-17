@@ -2,56 +2,14 @@
 #
 # Copyright (c) 2018 Ensoft Ltd
 
-import argparse, logging, logging.config, sys
-import sanic, sanic.response, yaml
+import argparse, functools, logging, logging.config, sys
+import sanic, sanic.worker.loader, yaml
 
-from . import WebsocketHandler
+from . import server
 from ._util import logger
 
 log = logging.getLogger(__name__)
 location = getattr(sys, "_MEIPASS", ".") + "/"  # where pre-canned files live
-
-
-def start(config, task):
-    """
-    Start a simple server with the specified configuration. If an app needs
-    more elaborate setup, then just copy this function and modify.
-    """
-    start_cfg = config["start"]
-    log.info(
-        "Starting app with %s",
-        ", ".join(["{}={}".format(k, v) for k, v in start_cfg.items()]),
-    )
-    app = sanic.Sanic(name="entrance-app", log_config=None)
-    app.config.RESPONSE_TIMEOUT = 3600
-    app.config.KEEP_ALIVE_TIMEOUT = 75
-
-    # Websocket handling
-    @app.websocket("/ws")
-    async def handle_ws(request, ws):
-        log.info("New websocket client")
-        ws_handler = WebsocketHandler(ws, config["features"])
-        await ws_handler.handle_incoming_requests()
-
-    # Static file handling
-    #
-    # Note:
-    # The order of 'app.static()' and route declarations (with '@app.route()')
-    # matters here. For static to be a fallback it should come after route
-    # declarations, e.g. if a route path contains a parameter.
-    static_dir = location + start_cfg["static_dir"]
-    app.static("/", static_dir)
-
-    @app.route("/")
-    async def home_page(request):
-        return await sanic.response.file(static_dir + "/index.html")
-
-    # Optionally invoke a caller-specified task once the event loop is up
-    if task is not None:
-        app.add_task(task)
-
-    # Enter event loop
-    app.run(host=start_cfg["host"], port=start_cfg["port"])
 
 
 def parse_args(args):
@@ -93,7 +51,26 @@ def main(*args, task=None):
     # Go
     logging.config.dictConfig(logging_config)
     logging.setLogRecordFactory(logger.FormattedLogRecord)
-    start(main_config, task)
+
+    loader = sanic.worker.loader.AppLoader(
+        factory=functools.partial(server.create_app, main_config, location)
+    )
+    app = loader.load()
+
+    # Optionally invoke a caller-specified task once the event loop is up
+    if task is not None:
+        app.add_task(task)
+
+    start_cfg = main_config["start"]
+    log.info(
+        "Starting app with %s",
+        ", ".join(["{}={}".format(k, v) for k, v in start_cfg.items()]),
+    )
+
+    # Enter event loop
+    app.prepare(host=start_cfg["host"], port=int(start_cfg["port"]), dev=True)
+    sanic.Sanic.serve(primary=app, app_loader=loader)
+
     log.info("Closing down gracefully")
 
 
