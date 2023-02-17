@@ -68,7 +68,7 @@ def main(*args, task=None):
     )
 
     # Enter event loop
-    app.prepare(host=start_cfg["host"], port=int(start_cfg["port"]), dev=False)
+    app.prepare(host=start_cfg["host"], port=int(start_cfg["port"]), dev=False, motd=False)
     sanic.Sanic.serve(primary=app, app_loader=loader)
 
     log.info("Closing down gracefully")
