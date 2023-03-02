@@ -62,4 +62,5 @@ class DirectoryFeature(ConfiguredFeature):
 
 
 # Start up
-entrance.main()
+if __name__ == "__main__":
+    entrance.main()
