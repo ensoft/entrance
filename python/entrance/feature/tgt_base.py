@@ -2,10 +2,11 @@
 #
 # Copyright (c) 2018 Ensoft Ltd
 
-import logging, time
+import logging
+import time
 
-from ..connection import connection_factory_by_name, ConState, Connection
 from .._util import events
+from ..connection import Connection, ConState, connection_factory_by_name
 from .dyn_base import DynamicFeature
 
 log = logging.getLogger(__name__)
@@ -125,7 +126,9 @@ class TargetFeature(DynamicFeature):
             def encode_state(state):
                 return {
                     "state": state.name,
-                    "error": state.failure_reason if state.is_failure() else "",
+                    "error": state.failure_reason
+                    if state.is_failure()
+                    else "",
                 }
 
             nfn = self.state_subscription_nfn.copy()

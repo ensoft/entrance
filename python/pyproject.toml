@@ -42,6 +42,9 @@ Issues = "https://github.com/ensoft/entrance/issues"
 [tool.hatch.build]
 include = ["entrance"]
 
+[tool.isort]
+profile = "black"
+line_length = 79
 
 [tool.ruff]
 # Exclude a variety of commonly ignored directories.
@@ -58,7 +61,7 @@ exclude = [
 ]
 
 # Same as Black.
-line-length = 80
+line-length = 79
 indent-width = 4
 
 # Assume Python 3.9 (minimum supported version)

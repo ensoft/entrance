@@ -2,15 +2,16 @@
 #
 # Copyright (c) 2018 Ensoft Ltd
 
+import logging
 from collections import defaultdict
-import asyncio, logging
-import ujson
 
+import ujson
 from starlette.websockets import WebSocketDisconnect
 from websockets.exceptions import ConnectionClosed
+
+from ._util import events
 from .connection import ConState
 from .feature import *
-from ._util import events
 
 log = logging.getLogger(__name__)
 
@@ -128,7 +129,9 @@ class WebsocketHandler:
         """
         Send an outbound error, caught by the frontend's app top level
         """
-        await self.notify(channel="error", nfn_type="error", value=error, **nfn)
+        await self.notify(
+            channel="error", nfn_type="error", value=error, **nfn
+        )
 
     def add_feature(self, feature, channel=None, target=None):
         """

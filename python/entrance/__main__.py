@@ -2,13 +2,11 @@
 #
 # Copyright (c) 2018 Ensoft Ltd
 
-import argparse
 import logging
 import logging.config
 import sys
 
 import uvicorn
-import yaml
 
 from . import settings
 from ._util import logger

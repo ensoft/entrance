@@ -8,7 +8,6 @@ import sys
 
 import yaml
 
-
 _LOCATION = getattr(sys, "_MEIPASS", ".") + "/"  # where pre-canned files live
 
 

@@ -4,8 +4,8 @@
 
 import logging
 
-from .base import Feature
 from ..exceptions import EntranceError
+from .base import Feature
 
 log = logging.getLogger(__name__)
 
@@ -31,7 +31,9 @@ class ConfiguredFeature(Feature):
                     'Invalid config item "{}" for feature {}'.format(
                         key, self.name
                     ),
-                    "Possible items are: {}".format(sorted(self.config.keys())),
+                    "Possible items are: {}".format(
+                        sorted(self.config.keys())
+                    ),
                 ]
                 log.critical(
                     "\n!!\n!!\n!! %s\n!!\n!!\n!!", "\n!! ".join(msg_parts)

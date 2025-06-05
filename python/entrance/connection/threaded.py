@@ -3,11 +3,15 @@
 #
 # Copyright (c) 2018 Ensoft Ltd
 
-import logging, re, threading
-import asyncio, janus
+import asyncio
+import logging
+import re
+import threading
 
-from .base import Connection, ConState
+import janus
+
 from .._util import events
+from .base import Connection, ConState
 
 log = logging.getLogger(__name__)
 
@@ -156,7 +160,9 @@ class ThreadedConnection(Connection):
             action, args, fut = self.request_q.sync_q.get()
             if not (action == "recv" and len(args) == 1 and args[0] == 0):
                 log.debug(
-                    "{} worker thread req: {}{}".format(self.name, action, args)
+                    "{} worker thread req: {}{}".format(
+                        self.name, action, args
+                    )
                 )
 
             # Do the request

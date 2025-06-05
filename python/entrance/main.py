@@ -9,9 +9,7 @@ from fastapi import FastAPI, WebSocket
 from fastapi.staticfiles import StaticFiles
 from starlette.responses import FileResponse
 
-from . import settings
-from . import WebsocketHandler
-
+from . import WebsocketHandler, settings
 
 log = logging.getLogger(__name__)
 
