@@ -30,7 +30,9 @@ def parse(args) -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("-p", "--port", help="override port")
     parser.add_argument("-a", "--addr", help="override bind address")
-    parser.add_argument("-d", "--debug", action="store_true", help="debug to console")
+    parser.add_argument(
+        "-d", "--debug", action="store_true", help="debug to console"
+    )
     parser.add_argument(
         "-c", "--config", default=_LOCATION + "config.yml", help="config file"
     )

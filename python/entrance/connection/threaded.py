@@ -38,7 +38,10 @@ class ThreadedConnection(Connection):
         Initiate a connection
         """
         self.thread = threading.Thread(
-            name=self.__class__, daemon=True, target=self._thread_main, kwargs=kwargs
+            name=self.__class__,
+            daemon=True,
+            target=self._thread_main,
+            kwargs=kwargs,
         )
         self.thread.start()
         self.event_loop_task = events.create_checked_task(self._event_loop())
@@ -53,7 +56,9 @@ class ThreadedConnection(Connection):
         # Give the thread a few seconds, then try to mop things up
         await asyncio.sleep(5)
         if self.state != ConState.DISCONNECTED:
-            log.info("Cancelling {} task for slow disconnection".format(self.name))
+            log.info(
+                "Cancelling {} task for slow disconnection".format(self.name)
+            )
             state = ConState.FAILURE_WHILE_DISCONNECTING
             state.failure_reason = "Disconnect timeout"
             await self._set_state(state)
@@ -78,7 +83,9 @@ class ThreadedConnection(Connection):
                     " (see debug.log for details)".format(e)
                 )
                 log.debug(
-                    "_event_loop exception details", exc_info=True, stack_info=True
+                    "_event_loop exception details",
+                    exc_info=True,
+                    stack_info=True,
                 )
 
     async def _request(self, action, override, *args):
@@ -134,18 +141,23 @@ class ThreadedConnection(Connection):
                         + err
                         + " (see debug.log for details)"
                     )
-                    log.debug("Exception details", exc_info=True, stack_info=True)
+                    log.debug(
+                        "Exception details", exc_info=True, stack_info=True
+                    )
                     m = re.search("<.*>: *(.+)", err)
                     failure_reason = m.group(1) if m else err
                     self._update_state(
-                        ConState.FAILED_TO_CONNECT, failure_reason=failure_reason
+                        ConState.FAILED_TO_CONNECT,
+                        failure_reason=failure_reason,
                     )
                 initiate_connect = False
 
             # Block for a request
             action, args, fut = self.request_q.sync_q.get()
             if not (action == "recv" and len(args) == 1 and args[0] == 0):
-                log.debug("{} worker thread req: {}{}".format(self.name, action, args))
+                log.debug(
+                    "{} worker thread req: {}{}".format(self.name, action, args)
+                )
 
             # Do the request
             handler = getattr(self, "_handle_" + action)
@@ -163,7 +175,8 @@ class ThreadedConnection(Connection):
                 log.warning("%s (see debug.log for details)", failure_reason)
                 log.debug("Exception details", exc_info=True, stack_info=True)
                 self._update_state(
-                    ConState.RECONNECTING_AFTER_FAILURE, failure_reason=failure_reason
+                    ConState.RECONNECTING_AFTER_FAILURE,
+                    failure_reason=failure_reason,
                 )
                 initiate_connect = True
                 result = e

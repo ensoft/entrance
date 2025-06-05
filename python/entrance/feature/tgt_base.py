@@ -72,7 +72,8 @@ class TargetFeature(DynamicFeature):
         # originally
         if not self.connect_requested:
             log.info(
-                "%s disconnecting, although we didn't connect originally", self.name
+                "%s disconnecting, although we didn't connect originally",
+                self.name,
             )
         self.connect_requested = False
         # Actually do it
@@ -142,5 +143,7 @@ class TargetFeature(DynamicFeature):
 
         # If a connection object has disconnected, then throw it away - we'll
         # create a new one if there's another connection request later
-        if child.state == ConState.DISCONNECTED and isinstance(child, Connection):
+        if child.state == ConState.DISCONNECTED and isinstance(
+            child, Connection
+        ):
             self.children.remove(child)

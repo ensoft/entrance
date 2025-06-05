@@ -18,6 +18,7 @@ log = logging.getLogger(__name__)
 # requests or notifications from their ancestor classes
 Feature.normalize_schema()
 
+
 # Turn multiple args into a single flat key for dict lookups
 def _mktuple(*args):
     return "||".join(args)
@@ -64,10 +65,13 @@ class WebsocketHandler:
                 await self._handle_req(req)
             except Exception as e:
                 log.error(
-                    "Exception during _handle_req: %s (see debug.log for details)", e
+                    "Exception during _handle_req: %s (see debug.log for details)",
+                    e,
                 )
                 log.debug(
-                    "_handle_req exception details", exc_info=True, stack_info=True
+                    "_handle_req exception details",
+                    exc_info=True,
+                    stack_info=True,
                 )
                 await self.notify_error(str(e))
 
@@ -204,6 +208,7 @@ class WebsocketHandler:
         log.info("Websocket closed")
         for feature in self.features:
             feature.close()
+
 
 MAX_LENGTH = 200
 

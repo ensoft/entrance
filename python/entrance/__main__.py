@@ -36,7 +36,7 @@ def main(*args):
         port=int(start_cfg["port"]),
         log_config=settings.logging_config,
         timeout_keep_alive=75,
-        ws_ping_interval=600, # 10 minutes
+        ws_ping_interval=600,  # 10 minutes
     )
     server = uvicorn.Server(config)
 
@@ -44,6 +44,7 @@ def main(*args):
     server.run()
 
     log.info("Closing down gracefully")
+
 
 if __name__ == "__main__":
     main(*sys.argv[1:])

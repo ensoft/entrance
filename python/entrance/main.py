@@ -18,6 +18,7 @@ log = logging.getLogger(__name__)
 
 app = FastAPI()
 
+
 # Websocket handling
 @app.websocket("/ws")
 async def handle_ws(ws: WebSocket):

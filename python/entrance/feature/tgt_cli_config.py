@@ -90,7 +90,9 @@ class CLIConfigFeature(TargetFeature):
         """
         Get config items that are unsupported by validation
         """
-        await self.connection.send("show configuration validation unsupported\n")
+        await self.connection.send(
+            "show configuration validation unsupported\n"
+        )
         result = await self.connection.expect_prompt(strip_top=True)
         result = result.strip()
         if result == "% No such configuration item(s)":

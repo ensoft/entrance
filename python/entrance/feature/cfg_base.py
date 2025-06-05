@@ -28,12 +28,13 @@ class ConfiguredFeature(Feature):
                 self.config[key] = val
             else:
                 msg_parts = [
-                    'Invalid config item "{}" for feature {}'.format(key, self.name),
-                    'Possible items are: {}'.format(sorted(self.config.keys())),
+                    'Invalid config item "{}" for feature {}'.format(
+                        key, self.name
+                    ),
+                    "Possible items are: {}".format(sorted(self.config.keys())),
                 ]
                 log.critical(
-                    "\n!!\n!!\n!! %s\n!!\n!!\n!!",
-                    "\n!! ".join(msg_parts)
+                    "\n!!\n!!\n!! %s\n!!\n!!\n!!", "\n!! ".join(msg_parts)
                 )
                 raise EntranceError(". ".join(msg_parts))
 
