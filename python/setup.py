@@ -20,23 +20,12 @@ router_feature_deps = ["janus", "ncclient", "paramiko"]
 # to rewrite this from '[]' to 'router_feature_deps'. I'm looking at you, nix...
 extra_deps = []
 
-# Sanic dropped support for Python 3.5, leaving a long-term support version at 18.12.
-# Otherwise, we need the new app loader introduced in 22.9.0.
-v = sys.version_info
-assert v.major == 3
-assert v.minor >= 5
-sanic = "sanic==18.12.0" if v.minor == 5 else "sanic>=22.9.0"
-
-# ujson is an indirect dependency (via sanic) and version 2.x has a C part that doesn't
-# compile.
-ujson = "ujson!=2.*"
-
 with open("README.md", "r") as f:
     long_description = f.read()
 
 setup(
     name="entrance",
-    version="1.1.20",
+    version="1.2.0",
     author="Ensoft Ltd",
     description="Server framework for web apps",
     url="https://github.com/ensoft/entrance",
@@ -47,11 +36,12 @@ setup(
         "Development Status :: 3 - Alpha",
         "Environment :: Web Environment",
         "License :: OSI Approved :: MIT License",
-        "Programming Language :: Python :: 3.5",
-        "Programming Language :: Python :: 3.6",
-        "Programming Language :: Python :: 3.7",
-        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3.13",
     ],
-    install_requires=["pyyaml", sanic, ujson] + extra_deps,
+    install_requires=["pyyaml", "uvicorn", "fastapi", "ujson", "websockets"] + extra_deps,
     extras_require={"with-router-features": router_feature_deps},
 )
