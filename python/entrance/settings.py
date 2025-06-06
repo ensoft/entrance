@@ -95,6 +95,9 @@ loggers:
     asyncio:
         level: DEBUG
         handlers: [debug]
+    fastapi:
+        level: WARNING
+        handlers: [debug]
     paramiko:
         level: WARNING
         handlers: [console, debug]
@@ -104,7 +107,7 @@ loggers:
     network:
         level: DEBUG
         handlers: [debug]
-    sanic:
+    uvicorn:
         level: WARNING
         handlers: [debug]
     websockets:
