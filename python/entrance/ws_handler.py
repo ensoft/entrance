@@ -2,19 +2,23 @@
 #
 # Copyright (c) 2018 Ensoft Ltd
 
+import logging
 from collections import defaultdict
-import asyncio, logging
+
 import ujson
+from starlette.websockets import WebSocketDisconnect
 from websockets.exceptions import ConnectionClosed
+
+from ._util import events
 from .connection import ConState
 from .feature import *
-from ._util import events
 
 log = logging.getLogger(__name__)
 
 # Once: normalize the Feature schemas, so that subclasses pick up the supported
 # requests or notifications from their ancestor classes
 Feature.normalize_schema()
+
 
 # Turn multiple args into a single flat key for dict lookups
 def _mktuple(*args):
@@ -52,37 +56,23 @@ class WebsocketHandler:
         Mini-event loop that listens for incoming requests and handles them
         """
         while True:
-            got_req = False
             try:
-                # If client is inactive for 10 minutes, send a ping to verify
-                # connectivity
-                req = await asyncio.wait_for(self.ws.recv(), timeout=10*60)
-                got_req = True
-            except asyncio.TimeoutError:
-                try:
-                    # Allow 10 seconds for pong
-                    await asyncio.wait_for(await self.ws.ping(), timeout=10)
-                except asyncio.TimeoutError:
-                    log.error("No pong - websocket seems inactive")
-                    self._handle_websocket_closed()
-                    break
-            except (asyncio.CancelledError, ConnectionClosed):
+                req = await self.ws.receive_text()
+            except WebSocketDisconnect:
                 self._handle_websocket_closed()
                 break
-            except Exception as e:
-                log.error("Websocket recv exception: %s", e)
+
             try:
-                if got_req:
-                    await self._handle_req(req)
-            except (asyncio.CancelledError, ConnectionClosed):
-                self._handle_websocket_closed()
-                break
+                await self._handle_req(req)
             except Exception as e:
                 log.error(
-                    "Exception during _handle_req: %s (see debug.log for details)", e
+                    "Exception during _handle_req: %s (see debug.log for details)",
+                    e,
                 )
                 log.debug(
-                    "_handle_req exception details", exc_info=True, stack_info=True
+                    "_handle_req exception details",
+                    exc_info=True,
+                    stack_info=True,
                 )
                 await self.notify_error(str(e))
 
@@ -133,13 +123,15 @@ class WebsocketHandler:
         if nfn["nfn_type"] != "pong":
             log.debug("WS SEND: {}".format(abbreviate(nfn)))
         json = ujson.dumps(nfn)
-        await self.ws.send(json)
+        await self.ws.send_text(json)
 
     async def notify_error(self, error, **nfn):
         """
         Send an outbound error, caught by the frontend's app top level
         """
-        await self.notify(channel="error", nfn_type="error", value=error, **nfn)
+        await self.notify(
+            channel="error", nfn_type="error", value=error, **nfn
+        )
 
     def add_feature(self, feature, channel=None, target=None):
         """
@@ -219,6 +211,7 @@ class WebsocketHandler:
         log.info("Websocket closed")
         for feature in self.features:
             feature.close()
+
 
 MAX_LENGTH = 200
 

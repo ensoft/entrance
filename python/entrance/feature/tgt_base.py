@@ -2,10 +2,11 @@
 #
 # Copyright (c) 2018 Ensoft Ltd
 
-import logging, time
+import logging
+import time
 
-from ..connection import connection_factory_by_name, ConState, Connection
 from .._util import events
+from ..connection import Connection, ConState, connection_factory_by_name
 from .dyn_base import DynamicFeature
 
 log = logging.getLogger(__name__)
@@ -72,7 +73,8 @@ class TargetFeature(DynamicFeature):
         # originally
         if not self.connect_requested:
             log.info(
-                "%s disconnecting, although we didn't connect originally", self.name
+                "%s disconnecting, although we didn't connect originally",
+                self.name,
             )
         self.connect_requested = False
         # Actually do it
@@ -124,7 +126,9 @@ class TargetFeature(DynamicFeature):
             def encode_state(state):
                 return {
                     "state": state.name,
-                    "error": state.failure_reason if state.is_failure() else "",
+                    "error": state.failure_reason
+                    if state.is_failure()
+                    else "",
                 }
 
             nfn = self.state_subscription_nfn.copy()
@@ -142,5 +146,7 @@ class TargetFeature(DynamicFeature):
 
         # If a connection object has disconnected, then throw it away - we'll
         # create a new one if there's another connection request later
-        if child.state == ConState.DISCONNECTED and isinstance(child, Connection):
+        if child.state == ConState.DISCONNECTED and isinstance(
+            child, Connection
+        ):
             self.children.remove(child)

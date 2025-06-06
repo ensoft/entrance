@@ -2,12 +2,16 @@
 #
 # Copyright (c) 2018 Ensoft Ltd
 
-import os, socket, sys, time
+import os
+import socket
+import sys
+import time
 
 try:
-    import paramiko
     import ncclient.manager as nc_mgr
+    import paramiko
     from ncclient.operations import RaiseMode
+
     from entrance.connection.base import ConnectionFactory, ConState
     from entrance.connection.cli import ThreadedCLIConnection
     from entrance.connection.netconf import ThreadedNCConnection

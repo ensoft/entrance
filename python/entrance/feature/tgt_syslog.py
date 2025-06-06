@@ -2,7 +2,8 @@
 #
 # Copyright (c) 2018 Ensoft Ltd
 
-import re, time
+import re
+import time
 
 from .._util import events
 from .tgt_base import TargetFeature
