@@ -52,6 +52,7 @@ exclude = [
     ".git",
     ".pyenv",
     ".ruff_cache",
+    ".venv",
     ".vscode",
     "build",
     "dist",
