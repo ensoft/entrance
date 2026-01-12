@@ -61,7 +61,7 @@ class WebsocketHandler:
             except asyncio.TimeoutError:
                 try:
                     # Allow 10 seconds for pong
-                    await asyncio.wait_for(await self.ws.ping(), timeout=10)
+                    await asyncio.wait_for(self.ws.ping(), timeout=10)
                 except asyncio.TimeoutError:
                     log.error("No pong - websocket seems inactive")
                     self._handle_websocket_closed()
