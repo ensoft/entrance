@@ -2,7 +2,9 @@
 #
 # Copyright (c) 2018 Ensoft Ltd
 
-import logging, os
+import logging
+import os
+
 from .cfg_base import ConfiguredFeature
 from .dyn_base import DynamicFeature
 from .tgt_base import TargetFeature
@@ -29,7 +31,10 @@ class CoreFeature(ConfiguredFeature):
 
     notifications = ["pong"]
 
-    config = {"allow_restart_requests": False, "allowed_dynamic_features": None}
+    config = {
+        "allow_restart_requests": False,
+        "allowed_dynamic_features": None,
+    }
 
     #
     # Implementation
@@ -60,7 +65,9 @@ class CoreFeature(ConfiguredFeature):
         allowed = self.config["allowed_dynamic_features"]
         if allowed is not None and feature_name not in allowed:
             return self._rpc_failure(
-                "Feature {} is disallowed by configuration".format(feature_name)
+                "Feature {} is disallowed by configuration".format(
+                    feature_name
+                )
             )
         feature_cls = DynamicFeature.find(feature_name)
         new_feature = feature_cls(self.ws_handler, channel, target, req)

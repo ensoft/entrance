@@ -3,7 +3,9 @@
 # Copyright (c) 2018 Ensoft Ltd
 
 from collections import defaultdict
+
 import ujson
+
 from .cfg_base import ConfiguredFeature
 
 # Remember which active websockets have requested data for a given channel, so
@@ -57,7 +59,9 @@ class PersistFeature(ConfiguredFeature):
         # Notify any other peer connections that care about this
         for obj in listeners[userid][channel]:
             if obj != self:
-                await obj._notify(nfn_type="persist_load", channel=channel, data=data)
+                await obj._notify(
+                    nfn_type="persist_load", channel=channel, data=data
+                )
 
     async def do_persist_save_sync(self, userid, channel, data):
         """
@@ -92,7 +96,9 @@ class PersistFeature(ConfiguredFeature):
         except FileNotFoundError:
             return {}
         except ValueError as e:
-            raise Exception("{} is invalid json: {}".format(self.config["filename"], e))
+            raise Exception(
+                "{} is invalid json: {}".format(self.config["filename"], e)
+            )
 
     def _save_db(self, db):
         """

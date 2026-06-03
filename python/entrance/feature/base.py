@@ -44,7 +44,10 @@ class Feature:
         """
 
         def normalize_cls(current_cls, parent_cls):
-            current_cls.requests = {**current_cls.requests, **parent_cls.requests}
+            current_cls.requests = {
+                **current_cls.requests,
+                **parent_cls.requests,
+            }
             current_cls.notifications = frozenset(
                 set(current_cls.notifications)
                 | set(parent_cls.notifications)
@@ -118,8 +121,11 @@ class Feature:
         Check that we're conforming to our own schema declaration
         """
         if nfn_type not in self.notifications:
-            msg = "Feature {} trying to send disallowed notification {}".format(
-                self.name, nfn_type)
+            msg = (
+                "Feature {} trying to send disallowed notification {}".format(
+                    self.name, nfn_type
+                )
+            )
             log.critical("\n!!\n!!\n!! %s\n!!\n!!", msg)
             raise EntranceError(msg)
 
