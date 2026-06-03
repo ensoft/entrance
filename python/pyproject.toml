@@ -1,3 +1,13 @@
+# To publish a new version to pypi:
+#
+#     rm -rf dist build entrance.egg-info
+#     nix-shell -p python3Packages.build python3Packages.twine
+#     python -m build
+#     twine check dist/*
+#     twine upload dist/*
+#
+# and supply a pypi API token
+
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
@@ -28,7 +38,7 @@ dependencies = [
     "ujson",
 ]
 
-[project.extra-dependencies]
+[project.optional-dependencies]
 with-router-features = [
     "janus",
     "ncclient",

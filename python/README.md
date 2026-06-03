@@ -2,7 +2,7 @@
 
 [EnTrance](https://github.com/ensoft/entrance) is a framework for writing
 simple but robust web apps, with a particular set of characteristics. It uses a
-Python 3.5+ asyncio backend, and an Elm frontend, communicating over a
+Python 3.9+ asyncio backend, and an Elm frontend, communicating over a
 websocket.
 
 This package provides the server-side functionality.

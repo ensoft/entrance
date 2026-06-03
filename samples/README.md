@@ -59,7 +59,7 @@ should give you all the available context to help debug that.
 ## How to run them
 
 The repo already contains a static `.js` file including the compiled Elm code,
-so all you need to run a sample is Python (version 3.5 or later). Just:
+so all you need to run a sample is Python (version 3.9 or later). Just:
 
  - cd to the `svr` directory for a sample
  - run `./make-venv` to install all the dependencies (including the `entrance`
